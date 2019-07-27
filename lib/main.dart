@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:redditclient/pages/home.dart';
+import 'package:redditclient/pages/login.dart';
+import 'package:redditclient/stores/redditStore.dart';
 
-void main() => runApp(MyApp());
+// void main() => runApp(MyApp());
+
+main() {
+  RedditStore.init();
+  runApp(MyApp());
+} 
 
 class MyApp extends StatelessWidget {
   @override
@@ -11,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark
       ),
-      home: Home(),
+      home: Login(),
     );
   }
 }
