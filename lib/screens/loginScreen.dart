@@ -2,17 +2,16 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
 import 'package:random_string/random_string.dart';
+import 'package:redditclient/screens/homeScreen.dart';
 import 'package:redditclient/stores/redditStore.dart';
 
-import 'home.dart';
+class LoginScreen extends StatefulWidget {
+  LoginScreen({Key key}) : super(key: key);
 
-class Login extends StatefulWidget {
-  Login({Key key}) : super(key: key);
-
-  _LoginState createState() => _LoginState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginScreenState extends State<LoginScreen> {
   bool error = false;
   String url = '';
   String errorText = '';
@@ -41,7 +40,7 @@ class _LoginState extends State<Login> {
                         child: RaisedButton(
                           child: Text('Retry'),
                           onPressed: () {
-                            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return Login(); }));
+                            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
                           },
                         ),
                       )
@@ -101,7 +100,7 @@ class _LoginState extends State<Login> {
       });
       return;
     }
-    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return Home(); }));
+    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
   }
 
 }

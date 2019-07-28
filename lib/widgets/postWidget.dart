@@ -1,18 +1,18 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:redditclient/pages/post.dart';
+import 'package:redditclient/screens/postScreen.dart';
 
-class PostPreview extends StatefulWidget {
+class PostWidget extends StatefulWidget {
   final Submission submission;
   final bool preview;
 
-  PostPreview({Key key, this.submission, this.preview}) : super(key: key);
+  PostWidget({Key key, this.submission, this.preview}) : super(key: key);
 
-  _PostPreviewState createState() => _PostPreviewState();
+  _PostWidgetState createState() => _PostWidgetState();
 }
 
-class _PostPreviewState extends State<PostPreview> {
+class _PostWidgetState extends State<PostWidget> {
   VoteState votedState;
   bool saved;
 
@@ -40,7 +40,7 @@ class _PostPreviewState extends State<PostPreview> {
                   GestureDetector(
                     onTap: () {
                       if(widget.preview)
-                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return Post(submission: widget.submission,); }));
+                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission,); }));
                     },
                     child: Column(
                       children: <Widget>[

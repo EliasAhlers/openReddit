@@ -1,15 +1,15 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:redditclient/stores/redditStore.dart';
-import 'package:redditclient/widgets/postPreview.dart';
+import 'package:redditclient/widgets/postWidget.dart';
 
-class Home extends StatefulWidget {
-  Home({Key key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  HomeScreen({Key key}) : super(key: key);
 
-  _HomeState createState() => _HomeState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
 
   List<Submission> submissions;
 
@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
           itemCount: this.submissions.length,
           itemBuilder: (BuildContext context, int index) {
             if(index % 2 == 1) {
-              return PostPreview(submission: this.submissions[index~/2 + 1], preview: true);
+              return PostWidget(submission: this.submissions[index~/2 + 1], preview: true);
             } else {
               return Divider();
             }

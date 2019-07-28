@@ -1,17 +1,17 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:redditclient/widgets/postPreview.dart';
-import 'package:redditclient/widgets/comment.dart';
+import 'package:redditclient/widgets/postWidget.dart';
+import 'package:redditclient/widgets/commentWidget.dart';
 
-class Post extends StatefulWidget {
+class PostScreen extends StatefulWidget {
   final Submission submission;
 
-  Post({Key key, this.submission}) : super(key: key);
+  PostScreen({Key key, this.submission}) : super(key: key);
 
-  _PostState createState() => _PostState();
+  _PostScreenState createState() => _PostScreenState();
 }
 
-class _PostState extends State<Post> {
+class _PostScreenState extends State<PostScreen> {
   List<Comment> comments;
 
   @override
@@ -40,7 +40,7 @@ class _PostState extends State<Post> {
          child: Column(
            mainAxisSize: MainAxisSize.max,
            children: <Widget>[
-              PostPreview(submission: widget.submission, preview: false),
+              PostWidget(submission: widget.submission, preview: false),
               this.comments != null ?
               ListView.builder(
                 shrinkWrap: true,

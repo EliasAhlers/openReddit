@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:redditclient/pages/login.dart';
+import 'package:redditclient/screens/loginScreen.dart';
 
 // void main() => runApp(MyApp());
 
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark
       ),
-      home: Login(),
+      home: LoginScreen(),
     );
   }
 }
