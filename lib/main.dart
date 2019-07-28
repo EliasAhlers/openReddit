@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:redditclient/pages/login.dart';
 import 'package:redditclient/stores/redditStore.dart';
 
+import 'pages/home.dart';
+
 // void main() => runApp(MyApp());
 
 main() {
-  RedditStore.init();
   runApp(MyApp());
 } 
 

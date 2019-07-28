@@ -24,6 +24,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   flutter_inappbrowser: ^1.2.1
+  random_string: ^1.1.0
   http: any
   draw: any
 

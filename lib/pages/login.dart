@@ -1,7 +1,10 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
+import 'package:random_string/random_string.dart';
 import 'package:redditclient/stores/redditStore.dart';
+
+import 'home.dart';
 
 class Login extends StatefulWidget {
   Login({Key key}) : super(key: key);
@@ -35,9 +38,9 @@ class _LoginState extends State<Login> {
     super.initState();
   }
 
-  void loadPageStart(InAppWebViewController controller, String url) {    
+  void loadPageStart(InAppWebViewController controller, String url) {
     if(url.toString().contains('code=')) {
-      String code = url.toString().replaceAll('https://thatseliyt.de/?state=foobar&code=', '');
+      String code = url.toString().replaceAll('https://thatseliyt.de/?state=Thisisastatefortesting&code=', '');
       this.confirmRedditLogin(code);
     }
   }
@@ -45,10 +48,11 @@ class _LoginState extends State<Login> {
   void loginToReddit() {
     RedditStore.reddit = Reddit.createInstalledFlowInstance(
       clientId: 'yG99FCjMF8tXaA',
-      userAgent: 'foobar',
+      userAgent: randomAlphaNumeric(10),
+      redirectUri: Uri.parse('https://thatseliyt.de/')
     );
 
-    final String authUrl = RedditStore.reddit.auth.url(['*'], 'foobar').toString().replaceAll('redirect_uri=null', 'redirect_uri=https%3A%2F%2Fthatseliyt.de%2F');
+    final String authUrl = RedditStore.reddit.auth.url(['*'], 'Thisisastatefortesting', compactLogin: true).toString();
 
     setState(() {
       this.url = authUrl.toString();
@@ -61,6 +65,7 @@ class _LoginState extends State<Login> {
     Redditor currentUser = await RedditStore.reddit.user.me();
     // Outputs: My name is DRAWApiOfficial
     print("My name is ${currentUser.displayName}");
+    //Navigator.push(context, new MaterialPageRoute(builder: (context) { return Home(); }));
   }
 
 }
