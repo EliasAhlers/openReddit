@@ -1,7 +1,7 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:redditclient/stores/redditStore.dart';
-import 'package:redditclient/widgets/post.dart';
+import 'package:redditclient/widgets/postPreview.dart';
 
 class Home extends StatefulWidget {
   Home({Key key}) : super(key: key);
@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
           itemCount: this.submissions.length,
           itemBuilder: (BuildContext context, int index) {
             if(index % 2 == 1) {
-              return Post(submission: this.submissions[index~/2 + 1]);
+              return PostPreview(submission: this.submissions[index~/2 + 1], preview: true);
             } else {
               return Divider();
             }
