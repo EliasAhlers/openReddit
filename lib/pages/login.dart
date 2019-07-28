@@ -13,7 +13,11 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool error = false;
   String url = '';
+  String errorText = '';
+  String errorReason = '';
+  String state = randomAlphaNumeric(16);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,27 @@ class _LoginState extends State<Login> {
             child: url != '' ? InAppWebView(
               initialUrl: this.url,
               onLoadStart: loadPageStart,
-            ) : Container()
+            ) : Container(
+              child: Center(
+                child: this.error ? 
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(this.errorText + ' '),
+                      Text(this.errorReason),
+                      ButtonTheme(
+                        child: RaisedButton(
+                          child: Text('Retry'),
+                          onPressed: () {
+                            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return Login(); }));
+                          },
+                        ),
+                      )
+                    ],
+                  ) : Container(),
+              )
+              ,
+            )
           )
         ],
       ),
@@ -40,8 +64,15 @@ class _LoginState extends State<Login> {
 
   void loadPageStart(InAppWebViewController controller, String url) {
     if(url.toString().contains('code=')) {
-      String code = url.toString().replaceAll('https://thatseliyt.de/?state=Thisisastatefortesting&code=', '');
+      String code = url.toString().replaceAll('https://thatseliyt.de/?state=' + this.state + '&code=', '');
       this.confirmRedditLogin(code);
+    } else if(url.toString().contains('error')) {
+      setState(() {
+        this.url = '';
+        this.error = true;
+        this.errorText = 'Error while authenticating, please try again.';
+        this.errorReason = url.replaceAll('https://thatseliyt.de/?state=' + this.state + '&error=', '');
+      });
     }
   }
 
@@ -52,7 +83,7 @@ class _LoginState extends State<Login> {
       redirectUri: Uri.parse('https://thatseliyt.de/')
     );
 
-    final String authUrl = RedditStore.reddit.auth.url(['*'], 'Thisisastatefortesting', compactLogin: true).toString();
+    final String authUrl = RedditStore.reddit.auth.url(['*'], this.state, compactLogin: true).toString();
 
     setState(() {
       this.url = authUrl.toString();
@@ -60,12 +91,17 @@ class _LoginState extends State<Login> {
   }
 
   void confirmRedditLogin(String code) async {
-    await RedditStore.reddit.auth.authorize(code);
-    // Retrieve information for the currently authenticated user
-    Redditor currentUser = await RedditStore.reddit.user.me();
-    // Outputs: My name is DRAWApiOfficial
-    print("My name is ${currentUser.displayName}");
-    //Navigator.push(context, new MaterialPageRoute(builder: (context) { return Home(); }));
+    try {
+      await RedditStore.reddit.auth.authorize(code);
+    } catch (e) {
+      setState(() {
+        this.url = '';
+        this.error = true;
+        this.errorText = 'Error while authenticating! Please try again'; 
+      });
+      return;
+    }
+    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return Home(); }));
   }
 
 }
