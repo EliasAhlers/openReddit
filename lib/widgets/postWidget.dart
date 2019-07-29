@@ -97,7 +97,7 @@ class _PostWidgetState extends State<PostWidget> {
                             )
                           ],
                         ),
-                        !widget.preview ?
+                        !widget.preview && widget.submission.selftext != '' ?
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 8),
                           child: Text(
@@ -106,9 +106,7 @@ class _PostWidgetState extends State<PostWidget> {
                               fontSize: 20
                             ),
                           ),
-                        )
-                        
-                        : Container(width: 0, height: 0),
+                        ) : Container(width: 0, height: 0),
                       ],
                     ),
                   ),

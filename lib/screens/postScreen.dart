@@ -49,7 +49,10 @@ class _PostScreenState extends State<PostScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   return CommentWidget(comment: this.comments[index]);
                 }
-              ) : Container(width: 0, height: 0),
+              )
+              : Center(
+                child: Text('Loading comments...'),
+              ),
            ],
          ),
        ),
