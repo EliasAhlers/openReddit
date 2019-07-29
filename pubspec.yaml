@@ -27,6 +27,7 @@ dependencies:
   random_string: ^1.1.0
   http: any
   draw: any
+  vibration: ^1.1.0
 
 dev_dependencies:
   flutter_test:

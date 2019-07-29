@@ -5,7 +5,9 @@ class ExpandedSectionWidget extends StatefulWidget {
 
   final Widget child;
   final bool expand;
-  ExpandedSectionWidget({this.expand = true, this.child});
+  final int duration;
+
+  ExpandedSectionWidget({this.expand = true, this.duration = 500, this.child});
 
   @override
   _ExpandedSectionWidgetState createState() => _ExpandedSectionWidgetState();
@@ -25,7 +27,7 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
   void prepareAnimations() {
     expandController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500)
+      duration: Duration(milliseconds: widget.duration)
     );
     Animation curve = CurvedAnimation(
       parent: expandController,

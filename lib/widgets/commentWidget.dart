@@ -4,6 +4,7 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:redditclient/widgets/ExpandedSectionWidget.dart';
 import 'package:redditclient/widgets/moreCommentsWidget.dart';
+import 'package:vibration/vibration.dart';
 
 
 class CommentWidget extends StatefulWidget {
@@ -33,12 +34,14 @@ class _CommentWidgetState extends State<CommentWidget> {
         onLongPress: () {
           setState(() {
             this.collapsed = !this.collapsed;
+            Vibration.vibrate(duration: 100);
           });
         },
         onTap: () {
           if(this.collapsed) {
             setState(() {
               this.collapsed = false;
+              Vibration.vibrate(duration: 100);
             });
           }
         },
@@ -86,6 +89,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                 ExpandedSectionWidget(
                   expand: !this.collapsed,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
                         widget.comment.body,
@@ -148,6 +152,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                               onTap: () {
                                 setState(() {
                                   this.collapsed = !this.collapsed;
+                                  Vibration.vibrate(duration: 100);
                                 });
                               },
                             ),
