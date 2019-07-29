@@ -2,6 +2,8 @@ import 'dart:core';
 
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:redditclient/widgets/moreCommentsWidget.dart';
+
 
 class CommentWidget extends StatefulWidget {
   final Comment comment;
@@ -12,9 +14,6 @@ class CommentWidget extends StatefulWidget {
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
-
-  List<String> moreCommentIds = <String>[];
-  List<List<Comment>> comments = <List<Comment>>[];
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class _CommentWidgetState extends State<CommentWidget> {
               left: BorderSide(
                 color: Colors.grey,
                 width: 2,
-              ) 
+              )
             )
           ),
           child: Column(
@@ -78,34 +77,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       if(comment is Comment) {
                         return CommentWidget(comment: widget.comment.replies.comments[index]);
                       } else if(comment is MoreComments) {
-                        if(moreCommentIds.contains(comment.id)) {
-                          int commentsIndex = this.moreCommentIds.indexOf(comment.id);
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: this.comments[commentsIndex].length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return CommentWidget(comment: this.comments[commentsIndex][index]);
-                            }
-                          );
-                        } else
-                        return ButtonTheme(
-                          child: RaisedButton(
-                            onPressed: () async {
-                              MoreComments moreComments = comment;
-                              List<dynamic> loadedCommentsDyn = await moreComments.comments(update: true);
-                              List<Comment> loadedComments = <Comment>[];
-                              loadedCommentsDyn.forEach((comment) {
-                                loadedComments.add(comment as Comment);
-                              });
-                              setState(() {
-                                this.moreCommentIds.add(comment.id);
-                                this.comments.add(loadedComments);
-                              });
-                            },
-                            child: Text('Load more comments(' + comment.count.toString() + ')'),
-                          ),
-                        );
+                        return MoreCommentsWidget(moreComments: comment);
                       } else return Container(width: 0, height: 0);
                     }
                   ),
@@ -117,4 +89,5 @@ class _CommentWidgetState extends State<CommentWidget> {
       ),
     );
   }
+
 }

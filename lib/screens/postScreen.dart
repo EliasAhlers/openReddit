@@ -1,5 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:redditclient/widgets/moreCommentsWidget.dart';
 import 'package:redditclient/widgets/postWidget.dart';
 import 'package:redditclient/widgets/commentWidget.dart';
 
@@ -12,7 +13,8 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  List<Comment> comments;
+  List<dynamic> comments;
+  bool enableShrinkWrap = false;
 
   @override
   void initState() {
@@ -22,14 +24,9 @@ class _PostScreenState extends State<PostScreen> {
 
   void getComments() async {
     await widget.submission.refreshComments();
-    List<Comment> commentsList = <Comment>[];
-    widget.submission.comments.comments.toList().forEach((comment) {
-      if(comment is Comment) {
-        commentsList.add(comment);
-      }
-    });
     setState(() {
-      this.comments = commentsList;
+      this.comments = widget.submission.comments.comments;
+      this.enableShrinkWrap = true;  // needs to be done cause of a bug destroying scroll performance
     });
   }
 
@@ -43,12 +40,15 @@ class _PostScreenState extends State<PostScreen> {
               PostWidget(submission: widget.submission, preview: false),
               this.comments != null ?
               ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
                 itemCount: this.comments.length,
+                shrinkWrap: this.enableShrinkWrap,
+                cacheExtent: 10,
+                physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (BuildContext context, int index) {
-                  return CommentWidget(comment: this.comments[index]);
-                }
+                  dynamic com = this.comments[index];
+                  if(com is Comment) return CommentWidget(comment: com); else
+                  return MoreCommentsWidget(moreComments: com, depth: this.comments[index-1].depth);
+                },
               )
               : Center(
                 child: Text('Loading comments...'),
