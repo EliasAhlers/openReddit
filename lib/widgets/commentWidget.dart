@@ -14,6 +14,15 @@ class CommentWidget extends StatefulWidget {
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
+  VoteState voteState;
+  bool saved;
+
+  @override
+  void initState() {
+    this.voteState = widget.comment.vote;
+    this.saved = widget.comment.saved;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +72,60 @@ class _CommentWidgetState extends State<CommentWidget> {
                 widget.comment.body,
                 textAlign: TextAlign.left,
                 style: TextStyle(
+                  fontSize: 17
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 5),
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Icon(
+                        Icons.arrow_upward,
+                        color: this.voteState == VoteState.upvoted ? Colors.red : null,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        VoteState newVoteState = this.voteState == VoteState.upvoted ? VoteState.none : VoteState.upvoted;
+                        if (newVoteState == VoteState.upvoted) widget.comment.upvote(); else widget.comment.clearVote();
+                        setState(() {
+                          this.voteState = newVoteState;
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        Icons.arrow_downward,
+                        color: this.voteState == VoteState.downvoted ? Colors.blue : null,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        VoteState newVoteState = this.voteState == VoteState.downvoted ? VoteState.none : VoteState.downvoted;
+                        if (newVoteState == VoteState.downvoted) widget.comment.downvote(); else widget.comment.clearVote();
+                        setState(() {
+                          this.voteState = newVoteState;
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        this.saved ? Icons.favorite : Icons.favorite_border,
+                        color: this.saved? Colors.yellow : null,
+                        size: 30,
+                      ),
+                      onTap: () {
+                        bool saved = !this.saved;
+                        if (saved) widget.comment.save(); else widget.comment.unsave();
+                        setState(() {
+                          this.saved = saved;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 2),
                 child: widget.comment.replies != null ? Container(
                   child: ListView.builder(
                     shrinkWrap: true,

@@ -26,8 +26,11 @@ class _PostScreenState extends State<PostScreen> {
     await widget.submission.refreshComments();
     setState(() {
       this.comments = widget.submission.comments.comments;
-      this.enableShrinkWrap = true;  // needs to be done cause of a bug destroying scroll performance
     });
+    await Future.delayed(Duration(milliseconds: 200));
+    setState(() {
+      this.enableShrinkWrap = true; // needs to be done cause of a bug destroying scroll performance
+    });  
   }
 
   @override
