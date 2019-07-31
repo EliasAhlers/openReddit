@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -46,17 +47,17 @@ class _PostWidgetState extends State<PostWidget> {
                       children: <Widget>[
                         imageUrl != ''
                             ? ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: Image.network(
-                                  imageUrl,
-                                  height:
-                                      MediaQuery.of(context).size.width * 0.56279,
-                                  width: MediaQuery.of(context).size.width,
-                                  alignment: Alignment.center,
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            : Container(width: 0, height: 0),
+                              borderRadius: BorderRadius.circular(4),
+                              child: 
+                              CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.56279,
+                                width: MediaQuery.of(context).size.width,
+                                alignment: Alignment.center,
+                                fit: BoxFit.cover,
+                              ),
+                            ) : Container(width: 0, height: 0),
                         Text(widget.submission.title,
                             maxLines: 3, style: TextStyle(fontSize: 25)),
                         Padding(

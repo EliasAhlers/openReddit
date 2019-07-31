@@ -24,6 +24,9 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
       itemCount: this.widget.submissions.length,
       cacheExtent: 10,
       itemBuilder: (BuildContext context, int index) {
+        if(this.widget.submissions[index+5].preview.length > 0 && (index+5 < this.widget.submissions.length-1)) {
+          precacheImage(NetworkImage(this.widget.submissions[index+5].preview.elementAt(0).source.url.toString()), context);
+        }
         if(index % 2 == 1) {
           return PostWidget(submission: this.widget.submissions[index~/2 + 1], preview: true);
         } else {
