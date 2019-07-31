@@ -60,10 +60,12 @@ packages:
   draw:
     dependency: "direct main"
     description:
-      name: draw
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.2+1"
+      path: "."
+      ref: HEAD
+      resolved-ref: bee2bf08a65b1dbe0dd30ab1156981ffb322c5c4
+      url: "git://github.com/draw-dev/DRAW.git"
+    source: git
+    version: "0.7.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -87,7 +89,7 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.11.3+17"
+    version: "0.12.0+2"
   http_parser:
     dependency: transitive
     description:

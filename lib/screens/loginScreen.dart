@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
 import 'package:random_string/random_string.dart';
 import 'package:redditclient/screens/homeScreen.dart';
-import 'package:redditclient/stores/redditStore.dart';
+import 'package:redditclient/services/redditService.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -76,13 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void loginToReddit() {
-    RedditStore.reddit = Reddit.createInstalledFlowInstance(
+    RedditService.reddit = Reddit.createInstalledFlowInstance(
       clientId: 'yG99FCjMF8tXaA',
       userAgent: randomAlphaNumeric(10),
       redirectUri: Uri.parse('https://thatseliyt.de/')
     );
 
-    final String authUrl = RedditStore.reddit.auth.url(['*'], this.state, compactLogin: true).toString();
+    final String authUrl = RedditService.reddit.auth.url(['*'], this.state, compactLogin: true).toString();
 
     setState(() {
       this.url = authUrl.toString();
@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void confirmRedditLogin(String code) async {
     try {
-      await RedditStore.reddit.auth.authorize(code);
+      await RedditService.reddit.auth.authorize(code);
     } catch (e) {
       setState(() {
         this.url = '';

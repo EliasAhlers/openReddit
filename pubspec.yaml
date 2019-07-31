@@ -26,8 +26,11 @@ dependencies:
   flutter_inappbrowser: ^1.2.1
   random_string: ^1.1.0
   http: any
-  draw: any
-  vibration: ^1.1.0
+  # draw: any
+  draw:
+    git:
+      url: git://github.com/draw-dev/DRAW.git
+  vibration: 1.1.0
 
 dev_dependencies:
   flutter_test:
