@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +18,7 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   VoteState votedState;
   bool saved;
+  bool showSpoiler = false;
 
   @override
   void initState() {
@@ -48,14 +51,21 @@ class _PostWidgetState extends State<PostWidget> {
                         imageUrl != ''
                             ? ClipRRect(
                               borderRadius: BorderRadius.circular(4),
-                              child: 
-                              CachedNetworkImage(
-                                imageUrl: imageUrl,
-                                height:
-                                    MediaQuery.of(context).size.width * 0.56279,
-                                width: MediaQuery.of(context).size.width,
-                                alignment: Alignment.center,
-                                fit: BoxFit.cover,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    this.showSpoiler = !this.showSpoiler;
+                                  });
+                                },
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl,
+                                  color: widget.submission.spoiler && !this.showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
+                                  height:
+                                      MediaQuery.of(context).size.width * 0.56279,
+                                  width: MediaQuery.of(context).size.width,
+                                  alignment: Alignment.center,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ) : Container(width: 0, height: 0),
                         Text(widget.submission.title,
