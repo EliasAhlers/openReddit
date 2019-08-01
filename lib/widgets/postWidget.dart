@@ -35,7 +35,7 @@ class _PostWidgetState extends State<PostWidget> {
 
     return Material(
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.only(bottom: 10.0),
         child: Container(
           child: Column(
             children: <Widget>[
@@ -121,76 +121,73 @@ class _PostWidgetState extends State<PostWidget> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        GestureDetector(
-                          child: Icon(
-                            Icons.arrow_upward,
-                            color: this.votedState == VoteState.upvoted
-                                ? Colors.red
-                                : null,
-                            size: 30,
-                          ),
+                  Row(
+                    children: <Widget>[
+                      GestureDetector(
+                        child: Icon(
+                          Icons.arrow_upward,
+                          color: this.votedState == VoteState.upvoted
+                              ? Colors.red
+                              : null,
+                          size: 30,
+                        ),
+                        onTap: () {
+                          setState(() {
+                            VoteState newVoteState =
+                                this.votedState == VoteState.upvoted
+                                    ? VoteState.none
+                                    : VoteState.upvoted;
+                            this.votedState = newVoteState;
+                            if (newVoteState == VoteState.upvoted)
+                              widget.submission.upvote();
+                            else
+                              widget.submission.clearVote();
+                          });
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: GestureDetector(
+                          child: Icon(Icons.arrow_downward,
+                              color: this.votedState == VoteState.downvoted
+                                  ? Colors.blue
+                                  : null,
+                              size: 30),
                           onTap: () {
                             setState(() {
                               VoteState newVoteState =
-                                  this.votedState == VoteState.upvoted
+                                  this.votedState == VoteState.downvoted
                                       ? VoteState.none
-                                      : VoteState.upvoted;
+                                      : VoteState.downvoted;
                               this.votedState = newVoteState;
-                              if (newVoteState == VoteState.upvoted)
-                                widget.submission.upvote();
+                              if (newVoteState == VoteState.downvoted)
+                                widget.submission.downvote();
                               else
                                 widget.submission.clearVote();
                             });
                           },
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: GestureDetector(
-                            child: Icon(Icons.arrow_downward,
-                                color: this.votedState == VoteState.downvoted
-                                    ? Colors.blue
-                                    : null,
-                                size: 30),
-                            onTap: () {
-                              setState(() {
-                                VoteState newVoteState =
-                                    this.votedState == VoteState.downvoted
-                                        ? VoteState.none
-                                        : VoteState.downvoted;
-                                this.votedState = newVoteState;
-                                if (newVoteState == VoteState.downvoted)
-                                  widget.submission.downvote();
-                                else
-                                  widget.submission.clearVote();
-                              });
-                            },
-                          ),
-                        ),
-                        GestureDetector(
-                          child: Icon(
-                              this.saved
-                                  ? Icons.favorite
-                                  : Icons.favorite_border,
-                              color: this.saved ? Colors.yellow : null,
-                              size: 30),
-                          onTap: () {
-                            setState(() {
-                              if (this.saved) {
-                                widget.submission.unsave();
-                                this.saved = false;
-                              } else {
-                                widget.submission.save();
-                                this.saved = true;
-                              }
-                            });
-                          },
-                        )
-                      ],
-                    ),
+                      ),
+                      GestureDetector(
+                        child: Icon(
+                            this.saved
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: this.saved ? Colors.yellow : null,
+                            size: 30),
+                        onTap: () {
+                          setState(() {
+                            if (this.saved) {
+                              widget.submission.unsave();
+                              this.saved = false;
+                            } else {
+                              widget.submission.save();
+                              this.saved = true;
+                            }
+                          });
+                        },
+                      )
+                    ],
                   )
                 ],
               )

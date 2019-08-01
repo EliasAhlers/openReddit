@@ -37,26 +37,30 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
        body: SingleChildScrollView(
-         child: Column(
-           mainAxisSize: MainAxisSize.max,
-           children: <Widget>[
-              PostWidget(submission: widget.submission, preview: false),
-              this.comments != null ?
-              ListView.builder(
-                itemCount: this.comments.length,
-                shrinkWrap: this.enableShrinkWrap,
-                cacheExtent: 10,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (BuildContext context, int index) {
-                  dynamic com = this.comments[index];
-                  if(com is Comment) return CommentWidget(comment: com); else
-                  return MoreCommentsWidget(moreComments: com, depth: this.comments[index-1].depth);
-                },
-              )
-              : Center(
-                child: Text('Loading comments...'),
-              ),
-           ],
+         child: Padding(
+           padding: const EdgeInsets.only(left: 8.0, right: 8, top: 20),
+           child: Column(
+             mainAxisSize: MainAxisSize.max,
+             children: <Widget>[
+                PostWidget(submission: widget.submission, preview: false),
+                this.comments != null ?
+                ListView.builder(
+                  itemCount: this.comments.length,
+                  shrinkWrap: this.enableShrinkWrap,
+                  cacheExtent: 10,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    dynamic com = this.comments[index];
+                    if(com is Comment) return CommentWidget(comment: com); else
+                    return MoreCommentsWidget(moreComments: com, depth: this.comments[index-1].depth);
+                  },
+                )
+                : LinearProgressIndicator()
+                // Center(
+                //   child: Text('Loading comments...'),
+                // ),
+             ],
+           ),
          ),
        ),
     );
