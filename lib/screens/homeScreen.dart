@@ -15,11 +15,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Submission> submissions;
   List<Subreddit> subscribedSubreddits;
+  bool shrinkWrapEnabled = false;
 
   @override
   void initState() {
     this.loadFrontpage();
     this.loadSubscribedSubreddits();
+    Future.delayed(Duration(milliseconds: 100)).then((x) {
+      setState(() {
+        this.shrinkWrapEnabled = true; // needs to be done cause of a bug destroying scroll performance
+      });
+    });
     super.initState();
   }
     
@@ -114,6 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(child: ListView.builder(
                 itemCount: this.subscribedSubreddits.length,
                 addAutomaticKeepAlives: true,
+                shrinkWrap: this.shrinkWrapEnabled,
+                cacheExtent: 20,
                 itemBuilder: (BuildContext context, int index) {
                   if(this.subscribedSubreddits[index] != null) {
                     return ListTile(
