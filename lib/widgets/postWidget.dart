@@ -5,12 +5,13 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:redditclient/screens/postScreen.dart';
+import 'package:redditclient/screens/subredditScreen.dart';
 
 class PostWidget extends StatefulWidget {
   final Submission submission;
   final bool preview;
 
-  PostWidget({Key key, this.submission, this.preview}) : super(key: key);
+  PostWidget({Key key, this.submission, this.preview = true}) : super(key: key);
 
   _PostWidgetState createState() => _PostWidgetState();
 }
@@ -69,15 +70,21 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             ) : Container(width: 0, height: 0),
                         Text(widget.submission.title,
-                            maxLines: 3, style: TextStyle(fontSize: 25)),
+                            maxLines: 3, style: TextStyle(fontSize: 23)),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
                             children: <Widget>[
-                              Text(
-                                'r/' + widget.submission.subreddit.displayName,
-                                style: TextStyle(
-                                    fontSize: 15, color: Colors.redAccent),
+                              GestureDetector(
+                                onTap: () async {
+                                  Subreddit subreddit = await widget.submission.subreddit.populate();
+                                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: subreddit); }));
+                                },
+                                child: Text(
+                                  'r/' + widget.submission.subreddit.displayName,
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.redAccent),
+                                ),
                               ),
                               Text(
                                 ' - ',

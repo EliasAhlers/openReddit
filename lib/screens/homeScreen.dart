@@ -1,6 +1,7 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:redditclient/screens/loginScreen.dart';
+import 'package:redditclient/screens/subredditScreen.dart';
 import 'package:redditclient/services/redditService.dart';
 import 'package:redditclient/widgets/postWidget.dart';
 import 'package:redditclient/widgets/submissionsWidget.dart';
@@ -14,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   List<Submission> submissions;
-  List<Subreddit> subscribedSubreddits;
+  List<Subreddit> subscribedSubreddits = <Subreddit>[];
   bool shrinkWrapEnabled = false;
 
   @override
@@ -51,8 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void loadSubscribedSubreddits() async {
-    this.subscribedSubreddits = await RedditService.reddit.user.subreddits().toList();
+  void loadSubscribedSubreddits() {
+    RedditService.reddit.user.subreddits().listen((Subreddit subreddit) {
+      setState(() {
+        this.subscribedSubreddits.add(subreddit);
+      });
+    });
     return;
   }
     
@@ -140,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       onTap: () {
-                        
+                        Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this.subscribedSubreddits[index]); }));
                       },
                     );
                   } else return Container(width: 0, height: 0);
