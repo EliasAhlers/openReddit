@@ -24,7 +24,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   font_awesome_flutter: ^8.5.0
-  flutter_inappbrowser: ^1.2.1
   random_string: ^1.1.0
   http: any
   # draw: any
@@ -33,6 +32,8 @@ dependencies:
       url: git://github.com/draw-dev/DRAW.git
   vibration: 1.1.0
   cached_network_image: ^1.1.1
+  flutter_inappbrowser: ^1.2.1
+  flutter_web_browser: ^0.11.0
 
 dev_dependencies:
   flutter_test:

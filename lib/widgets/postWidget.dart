@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:redditclient/screens/postScreen.dart';
 import 'package:redditclient/screens/subredditScreen.dart';
 
@@ -72,7 +72,7 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             ) : Container(width: 0, height: 0),
                         Text(widget.submission.title,
-                            maxLines: 3, style: TextStyle(fontSize: 23)),
+                            maxLines: 6, style: TextStyle(fontSize: 23)),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
@@ -136,30 +136,33 @@ class _PostWidgetState extends State<PostWidget> {
                   ),
                   Row(
                     children: <Widget>[
-                      GestureDetector(
-                        child: Icon(
-                          Icons.arrow_upward,
-                          color: this.votedState == VoteState.upvoted
-                              ? Colors.red
-                              : null,
-                          size: 30,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: GestureDetector(
+                          child: Icon(
+                            Icons.arrow_upward,
+                            color: this.votedState == VoteState.upvoted
+                                ? Colors.red
+                                : null,
+                            size: 30,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              VoteState newVoteState =
+                                  this.votedState == VoteState.upvoted
+                                      ? VoteState.none
+                                      : VoteState.upvoted;
+                              this.votedState = newVoteState;
+                              if (newVoteState == VoteState.upvoted)
+                                widget.submission.upvote();
+                              else
+                                widget.submission.clearVote();
+                            });
+                          },
                         ),
-                        onTap: () {
-                          setState(() {
-                            VoteState newVoteState =
-                                this.votedState == VoteState.upvoted
-                                    ? VoteState.none
-                                    : VoteState.upvoted;
-                            this.votedState = newVoteState;
-                            if (newVoteState == VoteState.upvoted)
-                              widget.submission.upvote();
-                            else
-                              widget.submission.clearVote();
-                          });
-                        },
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        padding: const EdgeInsets.only(right: 4),
                         child: GestureDetector(
                           child: Icon(Icons.arrow_downward,
                               color: this.votedState == VoteState.downvoted
@@ -181,23 +184,36 @@ class _PostWidgetState extends State<PostWidget> {
                           },
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4),
+                        child: GestureDetector(
+                          child: Icon(
+                              this.saved
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              color: this.saved ? Colors.yellow : null,
+                              size: 30),
+                          onTap: () {
+                            setState(() {
+                              if (this.saved) {
+                                widget.submission.unsave();
+                                this.saved = false;
+                              } else {
+                                widget.submission.save();
+                                this.saved = true;
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                      if(widget.submission.url != null)
                       GestureDetector(
                         child: Icon(
-                            this.saved
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: this.saved ? Colors.yellow : null,
-                            size: 30),
-                        onTap: () {
-                          setState(() {
-                            if (this.saved) {
-                              widget.submission.unsave();
-                              this.saved = false;
-                            } else {
-                              widget.submission.save();
-                              this.saved = true;
-                            }
-                          });
+                            Icons.open_in_browser,
+                            size: 30
+                        ),
+                        onTap: () async {
+                          await FlutterWebBrowser.openWebPage(url: widget.submission.url.toString()); // TODO: unify with login browser
                         },
                       )
                     ],

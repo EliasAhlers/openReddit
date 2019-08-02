@@ -1,9 +1,9 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
 import 'package:random_string/random_string.dart';
 import 'package:redditclient/screens/homeScreen.dart';
 import 'package:redditclient/services/redditService.dart';
+import 'package:redditclient/tools/LoginAppBrowser.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -13,10 +13,17 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool error = false;
-  String url = '';
   String errorText = '';
   String errorReason = '';
   String state = randomAlphaNumeric(16);
+  LoginAppBrowser loginAppBrowser;
+
+  @override
+  void initState() { 
+    this.loginAppBrowser = new LoginAppBrowser();
+    this.loginToReddit();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Expanded(
-            child: url != '' ? InAppWebView(
-              initialUrl: this.url,
-              onLoadStart: loadPageStart,
-            ) : Container(
+            child: Container(
               child: Center(
                 child: this.error ? 
                   Column(
@@ -55,26 +59,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  @override
-  void initState() {
-    this.loginToReddit();
-    super.initState();
-  }
-
-  void loadPageStart(InAppWebViewController controller, String url) {
-    if(url.toString().contains('code=')) {
-      String code = url.toString().replaceAll('https://thatseliyt.de/?state=' + this.state + '&code=', '');
-      this.confirmRedditLogin(code);
-    } else if(url.toString().contains('error')) {
-      setState(() {
-        this.url = '';
-        this.error = true;
-        this.errorText = 'Error while authenticating, please try again.';
-        this.errorReason = url.replaceAll('https://thatseliyt.de/?state=' + this.state + '&error=', '');
-      });
-    }
-  }
-
   void loginToReddit() {
     RedditService.reddit = Reddit.createInstalledFlowInstance(
       clientId: 'yG99FCjMF8tXaA',
@@ -83,18 +67,34 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     final String authUrl = RedditService.reddit.auth.url(['*'], this.state, compactLogin: true).toString();
-
-    setState(() {
-      this.url = authUrl.toString();
-    });
+    this.loginAppBrowser.setCallbacks(
+      codeCallback: (String code) {
+        this.confirmRedditLogin(code);
+      },
+      errorCallback: (String errorReason) {
+        setState(() {
+          this.error = true;
+          this.errorText = 'Error while authenticating, please try again.';
+          this.errorReason = errorReason;
+        });
+      },
+      state: this.state
+    );
+    this.loginAppBrowser.open(
+      url: authUrl,
+      options: {
+        'transparentBackground': true,
+        'toolbarTop': false
+      }
+    );
   }
 
   void confirmRedditLogin(String code) async {
     try {
       await RedditService.reddit.auth.authorize(code);
     } catch (e) {
+      this.loginAppBrowser.close();
       setState(() {
-        this.url = '';
         this.error = true;
         this.errorText = 'Error while authenticating! Please try again'; 
       });
