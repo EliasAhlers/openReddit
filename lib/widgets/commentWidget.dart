@@ -67,19 +67,34 @@ class _CommentWidgetState extends State<CommentWidget> {
                         color: Colors.blueAccent
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: Text(
-                          widget.comment.authorFlairText != null ? widget.comment.authorFlairText : '',
-                          style: TextStyle(
-                            backgroundColor: Colors.blueAccent,
-                            fontSize: 12
+                    if (widget.comment.authorFlairText != null) 
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Text(
+                            widget.comment.authorFlairText,
+                            style: TextStyle(
+                              backgroundColor: Colors.blueAccent,
+                              fontSize: 12
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    if(widget.comment.stickied)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 5),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Text(
+                            'Stickied',
+                            style: TextStyle(
+                              backgroundColor: Color.lerp(Colors.greenAccent, Colors.black, 0.3),
+                              fontSize: 12
+                            ),
+                          ),
+                        ),
+                      ),
                     Text(widget.comment.scoreHidden ? '-' : widget.comment.score.toString())
                   ],
                 ),

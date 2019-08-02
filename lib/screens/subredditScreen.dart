@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,6 +20,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
   List<Rule> rules;
   Stream<UserContent> userConent;
   String sortMethod = 'Hot';
+  StreamSubscription<UserContent> newUserConentsubscription;
 
   @override
   void initState() {
@@ -30,7 +33,12 @@ class _SubredditScreenState extends State<SubredditScreen> {
     this.rules = await widget.subreddit.rules();
   }
 
-  void getSubmissions() async {
+  Future<void> getSubmissions() async {
+    Completer completer = new Completer();
+
+    if(this.newUserConentsubscription != null) {
+      this.newUserConentsubscription.cancel();
+    }
     this.userContentList = [];
     switch (this.sortMethod) {
       case 'Hot': this.userConent = widget.subreddit.hot(); break;
@@ -40,11 +48,13 @@ class _SubredditScreenState extends State<SubredditScreen> {
       case 'Controversial': this.userConent = widget.subreddit.controversial(); break;
     }
     
-    this.userConent.listen((content) {
+    this.newUserConentsubscription = this.userConent.listen((content) async {
       setState(() {
         this.userContentList.add(content);
+        completer.complete();
       });
     });
+    return completer.future;
   }
 
   @override
@@ -142,9 +152,14 @@ class _SubredditScreenState extends State<SubredditScreen> {
           )
         ],
       ),
-      body: SubmissionsWidget(
-        submissions: this.userContentList.cast<Submission>(),
-      ),
+      body: RefreshIndicator(
+        onRefresh: () {
+          return this.getSubmissions();
+        },
+        child: SubmissionsWidget(
+          submissions: this.userContentList.cast<Submission>(),
+        ),
+      ),      
     );
   }
 }
