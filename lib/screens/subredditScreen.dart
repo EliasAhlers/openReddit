@@ -1,9 +1,7 @@
 
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:redditclient/widgets/postWidget.dart';
 import 'package:redditclient/widgets/submissionsWidget.dart';
 
 class SubredditScreen extends StatefulWidget {

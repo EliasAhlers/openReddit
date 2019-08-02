@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:redditclient/screens/postScreen.dart';
 import 'package:redditclient/screens/subredditScreen.dart';
 
@@ -48,6 +49,7 @@ class _PostWidgetState extends State<PostWidget> {
                       Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission,); }));
                     },
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         imageUrl != ''
                             ? ClipRRect(
@@ -72,7 +74,7 @@ class _PostWidgetState extends State<PostWidget> {
                         Text(widget.submission.title,
                             maxLines: 3, style: TextStyle(fontSize: 23)),
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.symmetric(vertical: 2),
                           child: Row(
                             children: <Widget>[
                               GestureDetector(
@@ -98,22 +100,26 @@ class _PostWidgetState extends State<PostWidget> {
                             ],
                           ),
                         ),
-                        Row(
-                          children: <Widget>[
-                            Text(
-                              widget.submission.upvotes.toString() + ' Votes',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              ' - ',
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(
-                              widget.submission.numComments.toString() +
-                                  ' Comments',
-                              style: TextStyle(fontSize: 20),
-                            )
-                          ],
+                        PostflairWidget(widget: this.widget),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Row(
+                            children: <Widget>[
+                              Text(
+                                widget.submission.upvotes.toString() + ' Votes',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                ' - ',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(
+                                widget.submission.numComments.toString() +
+                                    ' Comments',
+                                style: TextStyle(fontSize: 20),
+                              )
+                            ],
+                          ),
                         ),
                         !widget.preview && widget.submission.selftext != '' ?
                         Padding(
@@ -204,5 +210,90 @@ class _PostWidgetState extends State<PostWidget> {
       ),
     );
   
+  }
+}
+
+class PostflairWidget extends StatelessWidget {
+  const PostflairWidget({
+    Key key,
+    @required this.widget,
+  }) : super(key: key);
+
+  final PostWidget widget;
+
+  @override
+  Widget build(BuildContext context) {
+    Submission submission = widget.submission;
+    return submission.pinned || submission.stickied || submission.over18 || submission.spoiler || submission.archived ||
+    submission.locked || submission.linkFlairText != null ? Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: <Widget>[
+          submission.pinned ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              'Pinned',
+              style: TextStyle(
+                backgroundColor: Color.lerp(Colors.greenAccent, Colors.black, 0.3),
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+          submission.stickied ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              'Stickied',
+              style: TextStyle(
+                backgroundColor: Color.lerp(Colors.yellowAccent, Colors.black, 0.3),
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+          submission.over18 ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              'NSFW',
+              style: TextStyle(
+                backgroundColor: Color.lerp(Colors.redAccent, Colors.black, 0.3),
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+          submission.spoiler ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              'Spoiler',
+              style: TextStyle(
+                backgroundColor: Colors.grey,
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+          submission.archived ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              'Archived',
+              style: TextStyle(
+                backgroundColor: Color.lerp(Colors.orangeAccent, Colors.black, 0.3),
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+          submission.locked ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              'Locked',
+              style: TextStyle(
+                backgroundColor: Color.lerp(Colors.deepOrangeAccent, Colors.black, 0.3),
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+          submission.linkFlairText != null ? ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Text(
+              submission.linkFlairText,
+              style: TextStyle(
+                backgroundColor: Color.lerp(Colors.blueAccent, Colors.black, 0.3),
+              ),
+            ),
+          ) : Container(width: 0, height: 0),
+        ],
+      ),
+    ) : Container(width: 0, height: 0);
   }
 }
