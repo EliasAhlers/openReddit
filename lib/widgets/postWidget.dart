@@ -74,8 +74,7 @@ class _PostWidgetState extends State<PostWidget> {
                             children: <Widget>[
                               GestureDetector(
                                 onTap: () async {
-                                  Subreddit subreddit = await widget.submission.subreddit.populate();
-                                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: subreddit); }));
+                                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(futureSubreddit: widget.submission.subreddit.populate()); }));
                                 },
                                 child: Text(
                                   'r/' + widget.submission.subreddit.displayName,
