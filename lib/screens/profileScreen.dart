@@ -1,5 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:openReddit/widgets/commentWidget.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -40,10 +41,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void getUserContent() async {
     List<UserContent> userContents = await redditor.newest().toList();
-    userContents.forEach((userContent) {
+    userContents.forEach((userContent) async {
       if(userContent is Submission) {
         posts.add(userContent);
-      } else {
+      } else if(userContent is Comment) {
+        print(userContent.runtimeType);
         comments.add(userContent);
       }
     });
@@ -86,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: NetworkImage(
-                            redditor.data['icon_img']
+                            Uri.parse(redditor.data['icon_img'].toString()).path
                           ),
                         )
                       ),
@@ -108,9 +110,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-            Text('Posts'),
-            // SubmissionsWidget(submissions: posts),
-            Text('Comments'),
+            SubmissionsWidget(submissions: posts),
+            if(comments.length == 0)
+              Text('Loading...'),
+            if(comments.length != 0)
+            ListView.separated(
+              itemCount: comments.length,
+              itemBuilder: (BuildContext context, int index) {
+                return CommentWidget(comment: comments[index], showReplies: false);
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider();
+              },
+            )
           ],
         )
       ),

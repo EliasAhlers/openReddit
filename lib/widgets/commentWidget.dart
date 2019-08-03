@@ -9,8 +9,9 @@ import 'package:vibration/vibration.dart';
 
 class CommentWidget extends StatefulWidget {
   final Comment comment;
+  final bool showReplies;
 
-  CommentWidget({Key key, this.comment}) : super(key: key);
+  CommentWidget({Key key, this.comment, this.showReplies = true}) : super(key: key);
 
   _CommentWidgetState createState() => _CommentWidgetState();
 }
@@ -46,14 +47,14 @@ class _CommentWidgetState extends State<CommentWidget> {
           }
         },
         child: Container(
-          decoration: BoxDecoration(
+          decoration: widget.showReplies ? BoxDecoration(
             border: Border(
               left: widget.comment.depth > 0 ? BorderSide(
                 color: Colors.grey,
                 width: 2,
               ) : BorderSide(width: 0)
             )
-          ),
+          ): BoxDecoration(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -175,25 +176,25 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 2),
-                      child: widget.comment.replies != null ? Container(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: widget.comment.replies.comments.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            var comment = widget.comment.replies.comments[index];
-                            if(comment is Comment) {
-                              return CommentWidget(comment: widget.comment.replies.comments[index]);
-                            } else if(comment is MoreComments) {
-                              return MoreCommentsWidget(moreComments: comment);
-                            } else return Container(width: 0, height: 0);
-                          }
-                        ),
-                      ): Container(width: 0, height: 0),
-                    )
-
+                    if(widget.showReplies)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: widget.comment.replies != null ? Container(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: widget.comment.replies.comments.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              var comment = widget.comment.replies.comments[index];
+                              if(comment is Comment) {
+                                return CommentWidget(comment: widget.comment.replies.comments[index]);
+                              } else if(comment is MoreComments) {
+                                return MoreCommentsWidget(moreComments: comment);
+                              } else return Container(width: 0, height: 0);
+                            }
+                          ),
+                        ): Container(width: 0, height: 0),
+                      ),
                   ],
                 ),
               ),

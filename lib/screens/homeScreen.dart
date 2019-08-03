@@ -1,9 +1,9 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/loginScreen.dart';
+import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
-import 'package:openReddit/widgets/postWidget.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -85,7 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
                       },
                     ),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditor: snapshot.data); }));
+                    },
                   );
                 } else return ListTile(title: Text('Loading...'));
               },
