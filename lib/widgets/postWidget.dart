@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:openReddit/screens/postScreen.dart';
+import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
+import 'package:openReddit/services/redditService.dart';
 
 class PostWidget extends StatefulWidget {
   final Submission submission;
@@ -92,10 +94,15 @@ class _PostWidgetState extends State<PostWidget> {
                                 ' - ',
                                 style: TextStyle(fontSize: 15),
                               ),
-                              Text(
-                                'u/' + widget.submission.author,
-                                style: TextStyle(
-                                    fontSize: 15, color: Colors.blueAccent),
+                              GestureDetector(
+                                onTap: () async {
+                                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
+                                },
+                                child: Text(
+                                  'u/' + widget.submission.author,
+                                  style: TextStyle(
+                                      fontSize: 15, color: Colors.blueAccent),
+                                ),
                               )
                             ],
                           ),

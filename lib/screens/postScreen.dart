@@ -28,7 +28,7 @@ class _PostScreenState extends State<PostScreen> {
       setState(() {
         this.comments = widget.submission.comments.comments;
       });
-      await Future.delayed(Duration(milliseconds: this.comments.length ~/ 5));
+      await Future.delayed(Duration(milliseconds: 500));
       setState(() {
         this.enableShrinkWrap = true; // needs to be done cause of a bug destroying scroll performance
       });
@@ -49,7 +49,6 @@ class _PostScreenState extends State<PostScreen> {
                 ListView.builder(
                   itemCount: this.comments.length,
                   shrinkWrap: this.enableShrinkWrap,
-                  cacheExtent: 10,
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (BuildContext context, int index) {
                     dynamic com = this.comments[index];
