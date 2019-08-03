@@ -1,10 +1,10 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:redditclient/screens/loginScreen.dart';
-import 'package:redditclient/screens/subredditScreen.dart';
-import 'package:redditclient/services/redditService.dart';
-import 'package:redditclient/widgets/postWidget.dart';
-import 'package:redditclient/widgets/submissionsWidget.dart';
+import 'package:openReddit/screens/loginScreen.dart';
+import 'package:openReddit/screens/subredditScreen.dart';
+import 'package:openReddit/services/redditService.dart';
+import 'package:openReddit/widgets/postWidget.dart';
+import 'package:openReddit/widgets/submissionsWidget.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);

@@ -5,8 +5,8 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
-import 'package:redditclient/screens/postScreen.dart';
-import 'package:redditclient/screens/subredditScreen.dart';
+import 'package:openReddit/screens/postScreen.dart';
+import 'package:openReddit/screens/subredditScreen.dart';
 
 class PostWidget extends StatefulWidget {
   final Submission submission;

@@ -1,6 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:redditclient/widgets/commentWidget.dart';
+import 'package:openReddit/widgets/commentWidget.dart';
 
 class MoreCommentsWidget extends StatefulWidget {
   final MoreComments moreComments;

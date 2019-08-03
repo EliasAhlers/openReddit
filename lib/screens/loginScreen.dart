@@ -1,9 +1,9 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:random_string/random_string.dart';
-import 'package:redditclient/screens/homeScreen.dart';
-import 'package:redditclient/services/redditService.dart';
-import 'package:redditclient/tools/LoginAppBrowser.dart';
+import 'package:openReddit/screens/homeScreen.dart';
+import 'package:openReddit/services/redditService.dart';
+import 'package:openReddit/tools/LoginAppBrowser.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);

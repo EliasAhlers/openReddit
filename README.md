@@ -1,4 +1,4 @@
-# redditclient
+# openReddit
 
 A new Flutter project.
 

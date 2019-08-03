@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:redditclient/widgets/submissionsWidget.dart';
+import 'package:openReddit/widgets/submissionsWidget.dart';
 
 class SubredditScreen extends StatefulWidget {
 

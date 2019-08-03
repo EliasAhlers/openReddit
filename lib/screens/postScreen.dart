@@ -1,8 +1,8 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:redditclient/widgets/moreCommentsWidget.dart';
-import 'package:redditclient/widgets/postWidget.dart';
-import 'package:redditclient/widgets/commentWidget.dart';
+import 'package:openReddit/widgets/moreCommentsWidget.dart';
+import 'package:openReddit/widgets/postWidget.dart';
+import 'package:openReddit/widgets/commentWidget.dart';
 
 class PostScreen extends StatefulWidget {
   final Submission submission;

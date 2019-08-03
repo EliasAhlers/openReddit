@@ -1,6 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:redditclient/widgets/postWidget.dart';
+import 'package:openReddit/widgets/postWidget.dart';
 
 class SubmissionsWidget extends StatefulWidget {
   final List<Submission> submissions;

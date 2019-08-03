@@ -1,4 +1,4 @@
-package com.example.redditclient;
+package de.ThatsEli.openReddit;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

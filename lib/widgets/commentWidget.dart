@@ -2,8 +2,8 @@ import 'dart:core';
 
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:redditclient/widgets/expandedSectionWidget.dart';
-import 'package:redditclient/widgets/moreCommentsWidget.dart';
+import 'package:openReddit/widgets/expandedSectionWidget.dart';
+import 'package:openReddit/widgets/moreCommentsWidget.dart';
 import 'package:vibration/vibration.dart';
 
 
