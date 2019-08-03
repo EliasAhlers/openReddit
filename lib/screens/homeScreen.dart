@@ -129,25 +129,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 cacheExtent: 20,
                 itemBuilder: (BuildContext context, int index) {
                   if(this.subscribedSubreddits[index] != null) {
-                    return ListTile(
+                    if(this.subscribedSubreddits[index].iconImage != null)
+                      return ListTile(
+                        title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                this.subscribedSubreddits[index].iconImage.toString()
+                              ),
+                            )
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this.subscribedSubreddits[index]); }));
+                        },
+                      );
+                    else return ListTile(
                       title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
                       leading: Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              this.subscribedSubreddits[index].iconImage.toString() ?? ''
-                            ),
-                          )
-                        ),
                       ),
                       onTap: () {
                         Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this.subscribedSubreddits[index]); }));
                       },
-                    );
+                    ); 
                   } else return Container(width: 0, height: 0);
                 }
               )) 
