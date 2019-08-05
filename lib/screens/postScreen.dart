@@ -40,26 +40,26 @@ class _PostScreenState extends State<PostScreen> {
       appBar: AppBar(
         title: Text(widget.submission.title),
       ),
-       body: RefreshIndicator(
-         onRefresh: () {
-           return this.getComments();
-         },
-         child: Padding(
-           padding: const EdgeInsets.only(left: 8.0, right: 8, top: 20),
-           child: Column(
-             children: <Widget>[
-                this.comments != null ?
-                Expanded(child: 
-                  CommentListWidget(
-                    comments: this.comments,
-                    leading: PostWidget(submission: widget.submission, preview: false),
-                  )
-                )
-                : LinearProgressIndicator(),
-             ],
-           ),
-         ),
-       ),
+      body: RefreshIndicator(
+        onRefresh: () {
+          return this.getComments();
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Column(
+            children: <Widget>[
+              this.comments != null
+                  ? Expanded(
+                      child: CommentListWidget(
+                      comments: this.comments,
+                      leading: PostWidget(
+                          submission: widget.submission, preview: false),
+                    ))
+                  : LinearProgressIndicator(),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

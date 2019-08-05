@@ -129,13 +129,7 @@ class _PostWidgetState extends State<PostWidget> {
                           onTapLink: (link) {
                             FlutterWebBrowser.openWebPage(url: link); // TODO: unify with login browser
                           },
-                        )
-                        // Text(
-                        //   widget.submission.selftext,
-                        //   style: TextStyle(
-                        //     fontSize: 20
-                        //   ),
-                        // ),
+                        ),
                       ) : Container(width: 0, height: 0),
                     ],
                   ),
