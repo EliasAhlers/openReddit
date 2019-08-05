@@ -176,8 +176,11 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Reddit'),
       ),
-      body: this.submissions != null ?
-        SubmissionsWidget(submissions: this.submissions) : Text('Loading...'),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: this.submissions != null ?
+          SubmissionsWidget(submissions: this.submissions) : LinearProgressIndicator(),
+      ),
     );
   }
     

@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'openReddit',
       theme: ThemeData(
-        brightness: Brightness.dark
+        brightness: Brightness.dark,
+        appBarTheme: AppBarTheme(
+          color: Colors.black87
+        )
       ),
       home: LoginScreen(),
     );

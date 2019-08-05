@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/widgets/commentListWidget.dart';
@@ -21,29 +23,41 @@ class _PostScreenState extends State<PostScreen> {
     super.initState();
   }
 
-  void getComments() async {
-    await widget.submission.refreshComments();
-    setState(() {
-      this.comments = widget.submission.comments.comments;
+  Future<void> getComments() async {
+    Completer c = new Completer();
+    widget.submission.refreshComments().then((val) {
+      setState(() {
+        this.comments = widget.submission.comments.comments;
+      });
+      c.complete();
     });
+    return c.future;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       body: Padding(
-         padding: const EdgeInsets.only(left: 8.0, right: 8, top: 20),
-         child: Column(
-           children: <Widget>[
-              this.comments != null ?
-              Expanded(child: 
-                CommentListWidget(
-                  comments: this.comments,
-                  leading: PostWidget(submission: widget.submission, preview: false),
+      appBar: AppBar(
+        title: Text(widget.submission.title),
+      ),
+       body: RefreshIndicator(
+         onRefresh: () {
+           return this.getComments();
+         },
+         child: Padding(
+           padding: const EdgeInsets.only(left: 8.0, right: 8, top: 20),
+           child: Column(
+             children: <Widget>[
+                this.comments != null ?
+                Expanded(child: 
+                  CommentListWidget(
+                    comments: this.comments,
+                    leading: PostWidget(submission: widget.submission, preview: false),
+                  )
                 )
-              )
-              : LinearProgressIndicator(),
-           ],
+                : LinearProgressIndicator(),
+             ],
+           ),
          ),
        ),
     );

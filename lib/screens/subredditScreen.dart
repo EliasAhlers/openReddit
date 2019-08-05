@@ -179,8 +179,35 @@ class _SubredditScreenState extends State<SubredditScreen> {
           onRefresh: () {
             return this.getSubmissions();
           },
-          child: SubmissionsWidget(
-            submissions: this.userContentList.cast<Submission>(),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: SubmissionsWidget(
+              submissions: this.userContentList.cast<Submission>(),
+              leading: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: MediaQuery.of(context).size.width * 0.2,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: NetworkImage(subreddit.iconImage.toString() ?? '')
+                      )
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      'r/' + subreddit.displayName,
+                      style: TextStyle(
+                        fontSize: 30
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),      
       );
