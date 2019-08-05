@@ -27,7 +27,6 @@ class _SubredditScreenState extends State<SubredditScreen> {
 
   @override
   void initState() {
-    this.getRules();
     this.populate();
     super.initState();
   }
@@ -46,10 +45,14 @@ class _SubredditScreenState extends State<SubredditScreen> {
         ready = true;
       });
     }
+    this.getRules();
   }
 
   void getRules() async {
-    this.rules = await subreddit.rules();
+    List<Rule> rules = await subreddit.rules();
+    setState(() {
+      this.rules = rules;
+    });
   }
 
   Future<void> getSubmissions() async {

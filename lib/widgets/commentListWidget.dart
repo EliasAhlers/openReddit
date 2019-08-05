@@ -100,7 +100,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
               onTap: () {
                 
               },
-              child: !_hiddenComments.contains(com.id) ? CommentWidget(comment: com, showReplies: false, collapsed: _collapsedComments.contains(com.id)) : Container(width: 0, height: 0),
+              child: !_hiddenComments.contains(com.id) ? CommentWidget(comment: com, collapsed: _collapsedComments.contains(com.id)) : Container(width: 0, height: 0),
             ); 
           else
           return !_hiddenComments.contains(com.id) ? MoreCommentsWidget(moreComments: com, depth: this._comments[index-1].depth) : Container(width: 0, height: 0);

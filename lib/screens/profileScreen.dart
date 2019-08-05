@@ -45,7 +45,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if(userContent is Submission) {
         posts.add(userContent);
       } else if(userContent is Comment) {
-        print(userContent.runtimeType);
         comments.add(userContent);
       }
     });
@@ -110,14 +109,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             ),
-            SubmissionsWidget(submissions: posts),
+            if(posts.length == 0)
+              LinearProgressIndicator(),
+            if(posts.length != 0)
+              SubmissionsWidget(submissions: posts),
             if(comments.length == 0)
-              Text('Loading...'),
+              LinearProgressIndicator(),
             if(comments.length != 0)
             ListView.separated(
               itemCount: comments.length,
               itemBuilder: (BuildContext context, int index) {
-                return CommentWidget(comment: comments[index], showReplies: false);
+                return CommentWidget(comment: comments[index]);
               },
               separatorBuilder: (BuildContext context, int index) {
                 return Divider();
