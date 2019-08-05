@@ -61,7 +61,10 @@ class _SubredditScreenState extends State<SubredditScreen> {
     if(this.newUserConentsubscription != null) {
       this.newUserConentsubscription.cancel();
     }
-    this.userContentList = [];
+    setState(() {
+      this.userContentList = [];
+      this.ready = false;
+    });
     switch (this.sortMethod) {
       case 'Hot': this.userConent = subreddit.hot(); break;
       case 'Top': this.userConent = subreddit.top(); break;
@@ -73,7 +76,11 @@ class _SubredditScreenState extends State<SubredditScreen> {
     this.newUserConentsubscription = this.userConent.listen((content) async {
       setState(() {
         this.userContentList.add(content);
-        completer.complete();
+        if(!completer.isCompleted) {
+          Future.delayed(Duration(milliseconds: 50)).then((x) {
+            completer.complete();
+          });
+        }
       });
     });
     return completer.future;
@@ -166,10 +173,13 @@ class _SubredditScreenState extends State<SubredditScreen> {
                   ),
                 );
               }).toList(),
-              onChanged: (newVal) {
+              onChanged: (newVal) async {
                 setState(() {
                   this.sortMethod = newVal;
-                  this.getSubmissions();
+                });
+                await this.getSubmissions();
+                setState(() {
+                  this.ready = true;
                 });
               },
             )

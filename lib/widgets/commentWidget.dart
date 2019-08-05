@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:openReddit/widgets/expandedSectionWidget.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -103,10 +104,13 @@ class _CommentWidgetState extends State<CommentWidget>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      widget.comment.body,
-                      textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 17),
+                    // Text(
+                    //   widget.comment.body,
+                    //   textAlign: TextAlign.left,
+                    //   style: TextStyle(fontSize: 17),
+                    // ),
+                    MarkdownBody(
+                      data: widget.comment.body,
                     ),
                     ExpandedSectionWidget(
                       expand: !this.actionsCollapsed,
