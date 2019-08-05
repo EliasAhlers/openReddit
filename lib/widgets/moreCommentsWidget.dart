@@ -1,6 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:openReddit/widgets/commentWidget.dart';
+import 'package:openReddit/widgets/commentListWidget.dart';
 
 class MoreCommentsWidget extends StatefulWidget {
   final MoreComments moreComments;
@@ -19,19 +19,7 @@ class _MoreCommentsWidgetState extends State<MoreCommentsWidget> {
   @override
   Widget build(BuildContext context) {
     if(loaded) {
-      return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: this.loadedComments.length,
-        itemBuilder: (BuildContext context, int index) {
-          dynamic comment = this.loadedComments[index];
-          if(comment is Comment) {
-            return CommentWidget(comment: comment);
-          } else if(comment is MoreComments) {
-            return MoreCommentsWidget(moreComments: comment);
-          } else return Text('Error while loading this comment');
-        }
-      );
+      return CommentListWidget(comments: this.loadedComments, noScroll: true);
     } else
 
     if(loading) {
