@@ -7,7 +7,7 @@ class ExpandedSectionWidget extends StatefulWidget {
   final bool expand;
   final int duration;
 
-  ExpandedSectionWidget({this.expand = true, this.duration = 500, this.child});
+  ExpandedSectionWidget({this.expand = false, this.duration = 500, this.child});
 
   @override
   _ExpandedSectionWidgetState createState() => _ExpandedSectionWidgetState();
@@ -33,11 +33,9 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
       parent: expandController,
       curve: Curves.fastOutSlowIn,
     );
-    animation = Tween(begin: 1.0, end: 0.0).animate(curve)
+    animation = Tween(begin: 0.0, end: 1.0).animate(curve)
       ..addListener(() {
-        setState(() {
-
-        });
+        setState(() {});
       }
     );
   }
@@ -46,10 +44,10 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
   void didUpdateWidget(ExpandedSectionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(widget.expand) {
-      expandController.reverse();
+      expandController.forward();
     }
     else {
-      expandController.forward();
+      expandController.reverse();
     }
   }
 

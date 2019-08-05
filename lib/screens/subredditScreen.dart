@@ -184,7 +184,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
     } else {
       return Scaffold(
         appBar: AppBar(),
-        body: CircularProgressIndicator(),
+        body: LinearProgressIndicator(),
       );
     }
   }

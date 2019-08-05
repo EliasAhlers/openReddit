@@ -10,16 +10,17 @@ import 'package:vibration/vibration.dart';
 class CommentWidget extends StatefulWidget {
   final Comment comment;
   final bool showReplies;
+  final bool collapsed;
 
-  CommentWidget({Key key, this.comment, this.showReplies = true}) : super(key: key);
+  CommentWidget({Key key, this.comment, this.showReplies = true, this.collapsed = false}) : super(key: key);
 
   _CommentWidgetState createState() => _CommentWidgetState();
 }
 
-class _CommentWidgetState extends State<CommentWidget> {
+class _CommentWidgetState extends State<CommentWidget> with AutomaticKeepAliveClientMixin {
   VoteState voteState;
   bool saved;
-  bool collapsed = false;
+  bool actionsCollapsed = true;
 
   @override
   void initState() {
@@ -29,24 +30,19 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Material(
       child: Padding(
         padding: EdgeInsets.only(left: (10 * widget.comment.depth).toDouble()),
         child: GestureDetector(
-          onLongPress: () {
-            setState(() {
-              this.collapsed = !this.collapsed;
-              Vibration.vibrate(duration: 100);
-            });
-          },
           onTap: () {
-            if(this.collapsed) {
-              setState(() {
-                this.collapsed = false;
-                Vibration.vibrate(duration: 100);
-              });
-            }
+            setState(() {
+              this.actionsCollapsed = !this.actionsCollapsed;
+            });
           },
           child: Container(
             decoration: widget.showReplies ? BoxDecoration(
@@ -100,24 +96,30 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ),
                       Padding(
                         padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(widget.comment.scoreHidden ? '-' : widget.comment.score.toString()),
+                        child: Text(
+                          widget.comment.scoreHidden ? '-' : widget.comment.score.toString(),
+                          style: TextStyle(
+                            color: this.voteState == VoteState.upvoted ? Colors.redAccent : this.voteState == VoteState.downvoted ? Colors.blueAccent : null
+                          ),
+                          ),
                       )
                     ],
                   ),
                 ),
-                ExpandedSectionWidget(
-                  expand: !this.collapsed,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.comment.body,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 17
-                        ),
+                if(!widget.collapsed)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      widget.comment.body,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 17
                       ),
-                      Padding(
+                    ),
+                    ExpandedSectionWidget(
+                      expand: !this.actionsCollapsed,
+                      child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 5),
                         child: Row(
                           children: <Widget>[
@@ -132,6 +134,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 if (newVoteState == VoteState.upvoted) widget.comment.upvote(); else widget.comment.clearVote();
                                 setState(() {
                                   this.voteState = newVoteState;
+                                  this.actionsCollapsed = true;
                                 });
                               },
                             ),
@@ -146,6 +149,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 if (newVoteState == VoteState.downvoted) widget.comment.downvote(); else widget.comment.clearVote();
                                 setState(() {
                                   this.voteState = newVoteState;
+                                  this.actionsCollapsed = true;
                                 });
                               },
                             ),
@@ -160,45 +164,34 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 if (saved) widget.comment.save(); else widget.comment.unsave();
                                 setState(() {
                                   this.saved = saved;
-                                });
-                              },
-                            ),
-                            GestureDetector(
-                              child: Icon(
-                                Icons.format_line_spacing,
-                                size: 30,
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  this.collapsed = !this.collapsed;
-                                  Vibration.vibrate(duration: 100);
+                                  this.actionsCollapsed = true;
                                 });
                               },
                             ),
                           ],
                         ),
                       ),
-                      if(widget.showReplies)
-                        Padding(
-                          padding: const EdgeInsets.only(left: 2),
-                          child: widget.comment.replies != null ? Container(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: widget.comment.replies.comments.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                dynamic comment = widget.comment.replies.comments[index];
-                                if(comment is Comment) {
-                                  return CommentWidget(comment: widget.comment.replies.comments[index]);
-                                } else if(comment is MoreComments) {
-                                  return MoreCommentsWidget(moreComments: comment);
-                                } else return Container(width: 0, height: 0);
-                              }
-                            ),
-                          ): Container(width: 0, height: 0),
-                        ),
-                    ],
-                  ),
+                    ),
+                    if(widget.showReplies)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 2),
+                        child: widget.comment.replies != null ? Container(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: widget.comment.replies.comments.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              dynamic comment = widget.comment.replies.comments[index];
+                              if(comment is Comment) {
+                                return CommentWidget(comment: widget.comment.replies.comments[index]);
+                              } else if(comment is MoreComments) {
+                                return MoreCommentsWidget(moreComments: comment);
+                              } else return Container(width: 0, height: 0);
+                            }
+                          ),
+                        ): Container(width: 0, height: 0),
+                      ),
+                  ],
                 ),
               ],
             ),
@@ -207,5 +200,6 @@ class _CommentWidgetState extends State<CommentWidget> {
       ),
     );
   }
+
 
 }
