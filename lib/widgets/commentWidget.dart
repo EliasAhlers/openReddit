@@ -122,6 +122,7 @@ class _CommentWidgetState extends State<CommentWidget>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,                            
                             children: <Widget>[
                               GestureDetector(
                                 child: Icon(

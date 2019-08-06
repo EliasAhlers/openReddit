@@ -1,6 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:openReddit/widgets/commentWidget.dart';
+import 'package:openReddit/widgets/commentListWidget.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -116,15 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if(comments.length == 0)
               LinearProgressIndicator(),
             if(comments.length != 0)
-            ListView.separated(
-              itemCount: comments.length,
-              itemBuilder: (BuildContext context, int index) {
-                return CommentWidget(comment: comments[index]);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return Divider();
-              },
-            )
+              CommentListWidget(comments: comments)
           ],
         )
       ),

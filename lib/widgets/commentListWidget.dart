@@ -70,6 +70,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
       child: ListView.builder(
         itemCount: this._comments.length,
         shrinkWrap: true,
+        cacheExtent: 3,
         physics: widget.noScroll ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
           if(widget.leading != null && index == 0) {

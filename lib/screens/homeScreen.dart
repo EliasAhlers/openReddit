@@ -14,41 +14,47 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  List<Submission> submissions;
+  List<Submission> submissions = [];
   List<Subreddit> subscribedSubreddits = <Subreddit>[];
-  bool shrinkWrapEnabled = false;
 
   @override
   void initState() {
     this.loadFrontpage();
     this.loadSubscribedSubreddits();
-    Future.delayed(Duration(milliseconds: 100)).then((x) {
-      setState(() {
-        this.shrinkWrapEnabled = true; // needs to be done cause of a bug destroying scroll performance
-      });
-    });
     super.initState();
   }
     
   void loadFrontpage() async {
-    var submissions = RedditService.getSubmissions(await RedditService.reddit.front.best(params: { 'limit': '100' }).toList());
     setState(() {
-      this.submissions = submissions;
+      this.submissions = [];
+    });
+    RedditService.reddit.front.best().listen((submission) {
+      setState(() {
+        this.submissions.add(submission);
+      });
     });
   }
 
   void loadPopular() async {
-    var submissions = RedditService.getSubmissions(await RedditService.reddit.front.top(timeFilter: TimeFilter.day, params: { 'limit': '100' }).toList());
     setState(() {
-      this.submissions = submissions;
+      this.submissions = [];
+    });
+    RedditService.reddit.front.top(timeFilter: TimeFilter.day).listen((submission) {
+      setState(() {
+        this.submissions.add(submission);
+      });
     });
   }
 
   void loadSaved() async {
-    Redditor me = await RedditService.reddit.user.me();
-    var submissions = RedditService.getSubmissions(await me.saved().toList());
     setState(() {
-      this.submissions = submissions;
+      this.submissions = [];
+    });
+    Redditor me = await RedditService.reddit.user.me();
+    me.saved().listen((submission) {
+      setState(() {
+        this.submissions.add(submission);
+      });
     });
   }
 
@@ -127,11 +133,10 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(child: ListView.builder(
                 itemCount: this.subscribedSubreddits.length,
                 addAutomaticKeepAlives: true,
-                shrinkWrap: this.shrinkWrapEnabled,
-                cacheExtent: 20,
+                cacheExtent: 10,
                 itemBuilder: (BuildContext context, int index) {
                   if(this.subscribedSubreddits[index] != null) {
-                    if(this.subscribedSubreddits[index].iconImage != null)
+                    if(this.subscribedSubreddits[index].iconImage != null && this.subscribedSubreddits[index].iconImage.toString() != '') 
                       return ListTile(
                         title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
                         leading: Container(
@@ -178,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: this.submissions != null ?
+        child: this.submissions.length > 0 ?
           SubmissionsWidget(submissions: this.submissions) : LinearProgressIndicator(),
       ),
     );
