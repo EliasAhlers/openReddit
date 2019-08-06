@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/loginScreen.dart';
+import 'package:openReddit/services/settingsService.dart';
 
 // void main() => runApp(MyApp());
 
 main() {
+  SettingsService.init();
   runApp(MyApp());
 } 
 

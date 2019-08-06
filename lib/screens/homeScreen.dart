@@ -6,6 +6,8 @@ import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
+import 'settingsScreen.dart';
+
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
 
@@ -173,7 +175,9 @@ class _HomeScreenState extends State<HomeScreen> {
             Divider(),
             ListTile(
               title: Text('Settings & About'),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return new SettingsScreen(); }));
+              },
             ),
           ],
         )

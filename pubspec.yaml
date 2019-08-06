@@ -35,6 +35,8 @@ dependencies:
   flutter_inappbrowser: ^1.2.1
   flutter_web_browser: ^0.11.0
   flutter_markdown: ^0.2.0
+  sembast: ^2.0.1
+  path_provider: ^1.2.0
 
 dev_dependencies:
   flutter_test:

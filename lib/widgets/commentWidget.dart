@@ -4,6 +4,7 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/widgets/expandedSectionWidget.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -122,7 +123,7 @@ class _CommentWidgetState extends State<CommentWidget>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 5),
                           child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,                            
+                          mainAxisAlignment: SettingsService.getKey('comment_actions_align_right') ? MainAxisAlignment.end : MainAxisAlignment.start,                            
                             children: <Widget>[
                               GestureDetector(
                                 child: Icon(
