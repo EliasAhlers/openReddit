@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:openReddit/services/settingsService.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -49,7 +50,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           Divider(),
-          Center(child: Text('Made by ThatsEli with ❤')),
+          Center(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Made by ThatsEli with ❤'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    child: Text('github.com/ThatsEli'),
+                    onTap: () { FlutterWebBrowser.openWebPage(url: 'https://github.com/ThatsEli'); /* TODO: unify with login browser */ },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    child: Text('twitter.com/ThatsEliYT'),
+                    onTap: () { FlutterWebBrowser.openWebPage(url: 'https://twitter.com/ThatsEliYT'); /* TODO: unify with login browser */ },
+                  ),
+                ),
+              ],
+            )
+          ),
           // RaisedButton(
           //   child: Text('Save'),
           //   onPressed: () {

@@ -4,6 +4,7 @@ import 'package:openReddit/screens/loginScreen.dart';
 import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
+import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
 import 'settingsScreen.dart';
@@ -14,7 +15,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   List<Submission> submissions = [];
   List<Subreddit> subscribedSubreddits = <Subreddit>[];
@@ -26,14 +27,23 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
     
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if(state == AppLifecycleState.suspending) {
+      SettingsService.close();
+    }
+  }
+
   void loadFrontpage() async {
     setState(() {
       this.submissions = [];
     });
     RedditService.reddit.front.best().listen((submission) {
-      setState(() {
-        this.submissions.add(submission);
-      });
+      if(this.mounted) {
+        setState(() {
+          this.submissions.add(submission);
+        });
+      }
     });
   }
 
@@ -68,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
     return;
   }
+
     
   @override
   Widget build(BuildContext context) {
@@ -90,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     trailing: RaisedButton(
                       child: Text('Logout'),
                       onPressed: () {
+                        SettingsService.setKey('redditCredentials', '');
+                        SettingsService.save();
                         Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
                       },
                     ),

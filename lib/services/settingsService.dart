@@ -9,6 +9,8 @@ import 'package:sembast/sembast_io.dart';
 class SettingsService {
 
   static List<String> categorys = ['Comment settings'];
+  static Function onReady;
+  static bool ready = false;
   static Map<String, Map<String, dynamic>> _keys = {};
   static DatabaseFactory _dbFactory = databaseFactoryIo;
   static Database _db;
@@ -16,20 +18,23 @@ class SettingsService {
 
   static init() async {
     _keys = {
+      'redditCredentials': { 'value': '', 'hidden': true, 'description': 'Right align for comment actions', 'category': 9999999 },
       'comment_actions_align_right': { 'value': true, 'description': 'Right align for comment actions', 'category': 0 },
     };
     if(!_loadedDb) {
       _loadedDb = true;
       Directory appDoc = await getApplicationDocumentsDirectory();
       _db = await _dbFactory.openDatabase(appDoc.path + '/settings.db');
-      load();
+      await load();
+      ready = true;
+      onReady();
     }
   }
 
   static List<String> getKeysWithCategory(int category) {
     List<String> keys = [];
     _keys.forEach((key, value) {
-      if(value['category'] == category) {
+      if(value['category'] == category && value['hidden'] != true) {
         keys.add(key);
       }
     });
@@ -86,6 +91,10 @@ class SettingsService {
     _keys.forEach((key, value) async {
       store.record(key).delete(_db);
     });
+  }
+
+  static void close() {
+    _db.close();
   }
 
 }
