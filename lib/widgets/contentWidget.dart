@@ -22,20 +22,21 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
   bool _showSpoiler = false;
   bool _loadYouTube = false;
+  bool _gifProviderReady = false;
+  bool _videoReady = false;
+  bool _playing;
   String _contentType = '';
   VideoPlayerController _controller;
   YoutubePlayerController _ytController;
   Future<void> _initializeVideoPlayerFuture;
-  bool _gifProviderReady = false;
-  bool _videoReady = false;
-  
+
   @override
   void initState() {
-    if(widget.submission.url.toString().contains('imgur') || widget.submission.url.toString().contains('gfycat')) {
+    if(widget.submission.url.toString().contains('imgur.com') || widget.submission.url.toString().contains('gfycat.com')) {
       setState(() {
         this._contentType = 'GifProvider';
+        this._prepareGifVideo();
       });
-      this._prepareGifVideo();
     } else  if(widget.submission.url.toString().endsWith('.gif')) {
       setState(() {
         this._contentType = 'Gif';
@@ -47,8 +48,8 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     } else if(widget.submission.isVideo) {
       setState(() {
         this._contentType = 'Video';
+        this._prepareVideo();
       });
-      this._prepareVideo();
     } else if(widget.submission.preview.length > 0) {      
       setState(() {
         this._contentType = 'Image';
@@ -61,9 +62,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 
   void _prepareGifVideo() async {
-    List<Video> checkedUris = await CheckedVideoProvider.fromUri(
+    List<Video> checkedUris = VideoProvider.fromUri(
     Uri.parse(widget.submission.url.toString()),
-    ).getVideos().toList();
+    ).getVideos();
     _controller = VideoPlayerController.network(
       checkedUris[0].uri.toString(),
     );
@@ -72,11 +73,12 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     _initializeVideoPlayerFuture.then((_) {
       setState(() {
         this._gifProviderReady = true;
+        this._playing = SettingsService.getKey('content_gif_autoplay');
       });
-      if(SettingsService.getKey('post_gif_loop'))
-        _controller.setLooping(true);
-      if(SettingsService.getKey('post_gif_autoplay'))
-        _controller.play();
+      if(SettingsService.getKey('content_gif_autoplay')) 
+        this._controller.play();
+      _controller.setLooping(SettingsService.getKey('content_gif_loop'));
+      this._controller.setVolume(0);
     });
   }
 
@@ -90,8 +92,11 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     this._initializeVideoPlayerFuture.then((_) {
       setState(() {
         this._videoReady = true;
+        this._playing = SettingsService.getKey('content_video_autoplay');
       });
-      this._controller.play();
+      if(SettingsService.getKey('content_video_autoplay')) 
+        this._controller.play();
+      this._controller.setLooping(SettingsService.getKey('content_video_loop'));
       this._controller.setVolume(0);
     });
   }
@@ -106,9 +111,14 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getGifProvider() {
-    return this._gifProviderReady ? AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
-      child: VideoPlayer(_controller),
+    return this._gifProviderReady ? Column(
+      children: <Widget>[
+        AspectRatio(
+          aspectRatio: _controller.value.aspectRatio,
+          child: VideoPlayer(_controller),
+        ),
+        ControlsWidget(playing: _playing, controller: _controller)
+      ],
     ) : LinearProgressIndicator();
   }
 
@@ -119,11 +129,24 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(4),
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-        color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
-        alignment: Alignment.center,
-        fit: BoxFit.cover,
+      child: GestureDetector(
+        onTap: !this._showSpoiler ? () {
+          setState(() {
+            this._showSpoiler = true;
+          });
+        } : null,
+        onLongPress: () {
+          if(this._showSpoiler)
+            setState(() {
+              this._showSpoiler = false;
+            });
+        },
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
+          alignment: Alignment.center,
+          fit: BoxFit.cover,
+        ),
       )
     );
   }
@@ -137,7 +160,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       context: context,
       videoId: this._getYouTubeId(widget.submission.url.toString()),
       flags: YoutubePlayerFlags(
-        autoPlay: true,
+        autoPlay: SettingsService.getKey('content_youtube_autoplay'),
       ),
       key: Key(this._getYouTubeId(widget.submission.url.toString())),
       onPlayerInitialized: (controller) {
@@ -166,10 +189,16 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getVideo() {
-    return this._videoReady ? AspectRatio(
-      aspectRatio: _controller.value.aspectRatio,
-      child: VideoPlayer(_controller),
-    ) : LinearProgressIndicator();
+    return this._videoReady ? Column(
+      children: <Widget>[
+        AspectRatio(
+          aspectRatio: _controller.value.aspectRatio,
+          child: VideoPlayer(_controller),
+        ),
+        ControlsWidget(playing: _playing, controller: _controller,)
+      ],
+    )
+    : LinearProgressIndicator();
   }
   
   @override
@@ -197,4 +226,45 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
   }
 
+}
+
+class ControlsWidget extends StatefulWidget {
+  const ControlsWidget({
+    Key key,
+    @required bool playing,
+    @required VideoPlayerController controller,
+  }) : _playing = playing, _controller = controller, super(key: key);
+
+  final bool _playing;
+  final VideoPlayerController _controller;
+
+  @override
+  _ControlsWidgetState createState() => _ControlsWidgetState();
+}
+
+class _ControlsWidgetState extends State<ControlsWidget> {
+  bool _playing;
+
+  @override
+  void initState() {
+    this._playing = widget._playing;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        IconButton(
+          icon: this._playing ? Icon(Icons.pause) : Icon(Icons.play_arrow),
+          onPressed: () {
+            if(this._playing) widget._controller.pause(); else widget._controller.play();
+            setState(() {
+              this._playing = !this._playing;
+            });
+          },
+        )
+      ],
+    );
+  }
 }

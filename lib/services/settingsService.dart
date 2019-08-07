@@ -8,7 +8,7 @@ import 'package:sembast/sembast_io.dart';
 
 class SettingsService {
 
-  static List<String> categorys = ['Post settings', 'Comment settings'];
+  static List<String> categorys = ['Post settings', 'Content settings', 'Comment settings'];
   static Function onReady;
   static bool ready = false;
   static Map<String, Map<String, dynamic>> _keys = {};
@@ -20,9 +20,12 @@ class SettingsService {
     Completer c = new Completer();
     _keys = {
       'redditCredentials': { 'value': '', 'hidden': true, 'description': 'Right align for comment actions', 'category': 9999999 },
-      'post_gif_autoplay': { 'value': true, 'description': 'Autoplay gifs', 'category': 0 },
-      'post_gif_loop': { 'value': true, 'description': 'Loop gifs', 'category': 0 },
-      'comment_actions_align_right': { 'value': true, 'description': 'Right align for comment actions', 'category': 1 },
+      'content_gif_autoplay': { 'value': true, 'description': 'Autoplay gifs', 'category': 1 },
+      'content_gif_loop': { 'value': true, 'description': 'Loop gifs', 'category': 1 },
+      'content_video_autoplay': { 'value': true, 'description': 'Autoplay videos', 'category': 1 },
+      'content_video_loop': { 'value': true, 'description': 'Loop videos', 'category': 1 },
+      'content_youtube_autoplay': { 'value': true, 'description': 'Autoplay youtube videos', 'category': 1 },
+      'comment_actions_align_right': { 'value': true, 'description': 'Right align for comment actions', 'category': 2 },
     };
     if(!_loadedDb) {
       _loadedDb = true;
