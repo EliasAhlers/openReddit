@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chewie/chewie.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/services/settingsService.dart';
@@ -24,9 +25,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool _loadYouTube = false;
   bool _gifProviderReady = false;
   bool _videoReady = false;
-  bool _playing;
   String _contentType = '';
   VideoPlayerController _controller;
+  ChewieController _chewieController;
   YoutubePlayerController _ytController;
   Future<void> _initializeVideoPlayerFuture;
 
@@ -73,52 +74,60 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     _initializeVideoPlayerFuture.then((_) {
       setState(() {
         this._gifProviderReady = true;
-        this._playing = SettingsService.getKey('content_gif_autoplay');
       });
       if(SettingsService.getKey('content_gif_autoplay')) 
         this._controller.play();
-      _controller.setLooping(SettingsService.getKey('content_gif_loop'));
       this._controller.setVolume(0);
     });
+
+    _chewieController = ChewieController(
+      videoPlayerController: _controller,
+      autoPlay: false,
+      aspectRatio: _controller.value.aspectRatio,
+      allowFullScreen: false,
+      looping: SettingsService.getKey('content_gif_loop'),
+    );
   }
 
   void _prepareVideo() {
-    String url = widget.submission.data['media']['reddit_video']['fallback_url'];
     _controller = VideoPlayerController.network(
-      url
+      widget.submission.data['media']['reddit_video']['fallback_url']
     );
 
     this._initializeVideoPlayerFuture = _controller.initialize();
     this._initializeVideoPlayerFuture.then((_) {
       setState(() {
         this._videoReady = true;
-        this._playing = SettingsService.getKey('content_video_autoplay');
       });
       if(SettingsService.getKey('content_video_autoplay')) 
         this._controller.play();
-      this._controller.setLooping(SettingsService.getKey('content_video_loop'));
       this._controller.setVolume(0);
     });
+
+    this._chewieController = ChewieController(
+      videoPlayerController: _controller,
+      autoPlay: false,
+      allowFullScreen: false,
+      aspectRatio: widget.submission.data['media']['reddit_video']['width'] / widget.submission.data['media']['reddit_video']['height'],
+      looping: SettingsService.getKey('content_video_loop')
+    );
+
   }
 
   @override
   void dispose() {
     if(this._controller != null)
-    this._controller.dispose();
+      this._controller.dispose();
     if(this._ytController != null)
-    this._ytController.dispose();
+      this._ytController.dispose();
+    if(this._chewieController != null)
+      this._chewieController.dispose();
     super.dispose();
   }
 
   Widget _getGifProvider() {
-    return this._gifProviderReady ? Column(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
-        ),
-        ControlsWidget(playing: _playing, controller: _controller)
-      ],
+    return this._gifProviderReady ? Chewie(
+      controller: _chewieController,
     ) : LinearProgressIndicator();
   }
 
@@ -189,15 +198,8 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getVideo() {
-    return this._videoReady ? Column(
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
-        ),
-        ControlsWidget(playing: _playing, controller: _controller,)
-      ],
-    )
+    return this._videoReady ? Chewie(
+      controller: _chewieController)
     : LinearProgressIndicator();
   }
   
@@ -226,45 +228,4 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
   }
 
-}
-
-class ControlsWidget extends StatefulWidget {
-  const ControlsWidget({
-    Key key,
-    @required bool playing,
-    @required VideoPlayerController controller,
-  }) : _playing = playing, _controller = controller, super(key: key);
-
-  final bool _playing;
-  final VideoPlayerController _controller;
-
-  @override
-  _ControlsWidgetState createState() => _ControlsWidgetState();
-}
-
-class _ControlsWidgetState extends State<ControlsWidget> {
-  bool _playing;
-
-  @override
-  void initState() {
-    this._playing = widget._playing;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        IconButton(
-          icon: this._playing ? Icon(Icons.pause) : Icon(Icons.play_arrow),
-          onPressed: () {
-            if(this._playing) widget._controller.pause(); else widget._controller.play();
-            setState(() {
-              this._playing = !this._playing;
-            });
-          },
-        )
-      ],
-    );
-  }
 }
