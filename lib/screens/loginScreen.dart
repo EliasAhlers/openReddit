@@ -65,17 +65,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Function login = () {
 
-      String redditRedentials = SettingsService.getKey('redditCredentials');
+      String redditCredentials = SettingsService.getKey('redditCredentials');
 
-      if(redditRedentials != '') {
+      if(redditCredentials != '') {
+
+        try {
+          RedditService.reddit = Reddit.restoreAuthenticatedInstance(
+            redditCredentials,
+            clientId: 'yG99FCjMF8tXaA',
+            userAgent: randomAlphaNumeric(10),
+            redirectUri: Uri.parse('https://thatseliyt.de/')
+          );
+          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
+        } catch (e) {
+          SettingsService.setKey('redditCredentials', ''); SettingsService.save();
+          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
+        }
         
-        RedditService.reddit = Reddit.restoreAuthenticatedInstance(
-          redditRedentials,
-          clientId: 'yG99FCjMF8tXaA',
-          userAgent: randomAlphaNumeric(10),
-          redirectUri: Uri.parse('https://thatseliyt.de/')
-        );
-        Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
 
       } else {
 

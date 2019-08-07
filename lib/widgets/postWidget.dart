@@ -10,6 +10,10 @@ import 'package:openReddit/screens/postScreen.dart';
 import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
+import 'package:video_provider/video_provider.dart';
+import 'package:video_player/video_player.dart';
+
+import 'contentWidget.dart';
 
 class PostWidget extends StatefulWidget {
   final Submission submission;
@@ -20,10 +24,9 @@ class PostWidget extends StatefulWidget {
   _PostWidgetState createState() => _PostWidgetState();
 }
 
-class _PostWidgetState extends State<PostWidget> {
+class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMixin {
   VoteState votedState;
   bool saved;
-  bool showSpoiler = false;
 
   @override
   void initState() {
@@ -33,11 +36,11 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    String imageUrl = (widget.submission.preview.length > 0)
-        ? widget.submission.preview.elementAt(0).source.url.toString()
-        : '';
+  bool get wantKeepAlive => true;
 
+  @override
+  Widget build(BuildContext context) {
+    
     return Material(
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
@@ -53,19 +56,7 @@ class _PostWidgetState extends State<PostWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      imageUrl != ''
-                          ? ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: CachedNetworkImage(
-                              imageUrl: imageUrl,
-                              color: widget.submission.spoiler && !this.showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
-                              height:
-                                  MediaQuery.of(context).size.width * 0.56279,
-                              width: MediaQuery.of(context).size.width,
-                              alignment: Alignment.center,
-                              fit: BoxFit.cover,
-                            ),
-                          ) : Container(width: 0, height: 0),
+                      Center(child: ContentWidget(submission: widget.submission)),
                       Text(widget.submission.title,
                           maxLines: 6, style: TextStyle(fontSize: 23)),
                       Padding(
@@ -226,6 +217,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
   
   }
+
 }
 
 class PostflairWidget extends StatelessWidget {

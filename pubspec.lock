@@ -319,6 +319,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  video_player:
+    dependency: "direct main"
+    description:
+      name: video_player
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.10.1+6"
+  video_provider:
+    dependency: "direct main"
+    description:
+      name: video_provider
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.3+1"
+  youtube_player_flutter:
+    dependency: "direct main"
+    description:
+      name: youtube_player_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0+1"
+  ytview:
+    dependency: transitive
+    description:
+      name: ytview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
 sdks:
   dart: ">=2.2.2 <3.0.0"
-  flutter: ">=1.2.1 <2.0.0"
+  flutter: ">=1.5.0 <2.0.0"
