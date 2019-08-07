@@ -1,10 +1,10 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
-import 'package:openReddit/services/settingsService.dart';
-import 'package:random_string/random_string.dart';
 import 'package:openReddit/screens/homeScreen.dart';
 import 'package:openReddit/services/redditService.dart';
+import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/tools/LoginAppBrowser.dart';
+import 'package:random_string/random_string.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -12,7 +12,7 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
+class _LoginScreenState extends State<LoginScreen> {
   
   bool error = false;
   String errorText = '';
@@ -25,13 +25,6 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
     this.loginAppBrowser = new LoginAppBrowser();
     this.loginToReddit();
     super.initState();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(state == AppLifecycleState.suspending) {
-      SettingsService.close();
-    }
   }
 
   @override
@@ -139,6 +132,7 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
       return;
     }
     SettingsService.setKey('redditCredentials', RedditService.reddit.auth.credentials.toJson());
+    SettingsService.save();
     Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
   }
 

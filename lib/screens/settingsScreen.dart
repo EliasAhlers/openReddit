@@ -46,7 +46,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           RaisedButton(
             child: Text('Reset'),
             onPressed: () {
-              SettingsService.reset();
+              setState(() {
+                SettingsService.reset();
+              });
             },
           ),
           Divider(),

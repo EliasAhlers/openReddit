@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+class _HomeScreenState extends State<HomeScreen> {
 
   List<Submission> submissions = [];
   List<Subreddit> subscribedSubreddits = <Subreddit>[];
@@ -25,13 +25,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     this.loadFrontpage();
     this.loadSubscribedSubreddits();
     super.initState();
-  }
-    
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if(state == AppLifecycleState.suspending) {
-      SettingsService.close();
-    }
   }
 
   void loadFrontpage() async {

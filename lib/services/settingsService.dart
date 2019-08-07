@@ -16,7 +16,8 @@ class SettingsService {
   static Database _db;
   static bool _loadedDb = false;
 
-  static init() async {
+  static Future<void> init() async {
+    Completer c = new Completer();
     _keys = {
       'redditCredentials': { 'value': '', 'hidden': true, 'description': 'Right align for comment actions', 'category': 9999999 },
       'comment_actions_align_right': { 'value': true, 'description': 'Right align for comment actions', 'category': 0 },
@@ -26,9 +27,11 @@ class SettingsService {
       Directory appDoc = await getApplicationDocumentsDirectory();
       _db = await _dbFactory.openDatabase(appDoc.path + '/settings.db');
       await load();
+      c.complete();
       ready = true;
       onReady();
     }
+    return c.future;
   }
 
   static List<String> getKeysWithCategory(int category) {
@@ -88,9 +91,12 @@ class SettingsService {
 
   static void reset() {
     StoreRef store = StoreRef.main();
-    _keys.forEach((key, value) async {
+    _keys.forEach((key, value) {
       store.record(key).delete(_db);
     });
+    _db.close();
+    ready = false;
+    return;
   }
 
   static void close() {
