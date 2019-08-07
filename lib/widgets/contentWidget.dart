@@ -71,14 +71,6 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     );
 
     _initializeVideoPlayerFuture = _controller.initialize();
-    _initializeVideoPlayerFuture.then((_) {
-      setState(() {
-        this._gifProviderReady = true;
-      });
-      if(SettingsService.getKey('content_gif_autoplay')) 
-        this._controller.play();
-      this._controller.setVolume(0);
-    });
 
     _chewieController = ChewieController(
       videoPlayerController: _controller,
@@ -87,6 +79,15 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       allowFullScreen: false,
       looping: SettingsService.getKey('content_gif_loop'),
     );
+
+    _initializeVideoPlayerFuture.then((_) {
+      setState(() {
+        this._gifProviderReady = true;
+      });
+      if(SettingsService.getKey('content_gif_autoplay')) 
+        this._chewieController.play();
+      this._chewieController.setVolume(0);
+    });
   }
 
   void _prepareVideo() {
@@ -95,14 +96,6 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     );
 
     this._initializeVideoPlayerFuture = _controller.initialize();
-    this._initializeVideoPlayerFuture.then((_) {
-      setState(() {
-        this._videoReady = true;
-      });
-      if(SettingsService.getKey('content_video_autoplay')) 
-        this._controller.play();
-      this._controller.setVolume(0);
-    });
 
     this._chewieController = ChewieController(
       videoPlayerController: _controller,
@@ -111,6 +104,16 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       aspectRatio: widget.submission.data['media']['reddit_video']['width'] / widget.submission.data['media']['reddit_video']['height'],
       looping: SettingsService.getKey('content_video_loop')
     );
+
+    this._initializeVideoPlayerFuture.then((_) {
+      setState(() {
+        this._videoReady = true;
+      });
+      if(SettingsService.getKey('content_video_autoplay')) 
+        this._chewieController.play();
+      this._chewieController.setVolume(0);
+    });
+
 
   }
 
@@ -178,7 +181,11 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     ) : Column(
       children: <Widget>[
         GestureDetector(
-          child: Image.network(widget.submission.preview[0].source.url.toString()),
+          child: Image.network(
+              widget.submission.preview.length > 0 ? 
+              widget.submission.preview[0].source.url.toString()
+              : ''
+            ),
           onTap: () {
             setState(() {
               this._loadYouTube = true;

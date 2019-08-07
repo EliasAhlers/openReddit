@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -10,10 +9,10 @@ import 'package:openReddit/screens/postScreen.dart';
 import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
-import 'package:video_provider/video_provider.dart';
-import 'package:video_player/video_player.dart';
 
 import 'contentWidget.dart';
+
+enum postExtraActions { openProfile, report }
 
 class PostWidget extends StatefulWidget {
   final Submission submission;
@@ -206,6 +205,54 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                       onTap: () async {
                         await FlutterWebBrowser.openWebPage(url: widget.submission.url.toString()); // TODO: unify with login browser
                       },
+                    ),
+                    PopupMenuButton<postExtraActions>(
+                      onSelected: (value) {
+                        switch (value) {
+                          case postExtraActions.openProfile:
+                            Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
+                            break;
+                          case postExtraActions.report:
+                            String reason = '';
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) {
+                                return Material(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text('Reason for report:'),
+                                      TextField(
+                                        onChanged: (newVal) { reason = newVal; },
+                                      ),
+                                      RaisedButton(
+                                        child: Text('Report'),
+                                        onPressed: () {
+                                          widget.submission.report(reason);
+                                          Navigator.pop(dialogContext);
+                                        },
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                            );
+                            break;
+                          default:
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return [
+                          PopupMenuItem(
+                            value: postExtraActions.openProfile,
+                            child: Text('Open profile'),
+                          ),
+                          PopupMenuItem(
+                            value: postExtraActions.report,
+                            child: Text('Report'),
+                          ),
+                        ];
+                      },
+
                     )
                   ],
                 )

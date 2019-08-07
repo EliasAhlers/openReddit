@@ -48,6 +48,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         comments.add(userContent);
       }
     });
+    if(this.mounted)
     setState(() {});
   }
 
@@ -79,19 +80,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      width: 100,
-                      height: 100,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            Uri.parse(redditor.data['icon_img'].toString()).path
-                          ),
-                        )
+                    if(Uri.parse(redditor.data['icon_img'].toString()).path != '')
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              Uri.parse(redditor.data['icon_img'].toString()).path
+                            ),
+                          )
+                        ),
                       ),
-                    ),
                     Text(
                       'u/' + redditor.displayName,
                       style: TextStyle(
