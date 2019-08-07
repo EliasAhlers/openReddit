@@ -20,8 +20,10 @@ class SettingsService {
     Completer c = new Completer();
     _keys = {
       'redditCredentials': { 'value': '', 'hidden': true, 'description': 'Right align for comment actions', 'category': 9999999 },
+      'content_gif_preload': { 'value': true, 'description': 'Preload gifs', 'category': 1 },
       'content_gif_autoplay': { 'value': true, 'description': 'Autoplay gifs', 'category': 1 },
       'content_gif_loop': { 'value': true, 'description': 'Loop gifs', 'category': 1 },
+      'content_videos_preload': { 'value': true, 'description': 'Preload videos', 'category': 1 },
       'content_video_autoplay': { 'value': true, 'description': 'Autoplay videos', 'category': 1 },
       'content_video_loop': { 'value': true, 'description': 'Loop videos', 'category': 1 },
       'content_youtube_autoplay': { 'value': true, 'description': 'Autoplay youtube videos', 'category': 1 },

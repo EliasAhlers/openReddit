@@ -78,6 +78,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       aspectRatio: _controller.value.aspectRatio,
       allowFullScreen: false,
       looping: SettingsService.getKey('content_gif_loop'),
+      autoInitialize: SettingsService.getKey('content_gif_preload'),
     );
 
     _initializeVideoPlayerFuture.then((_) {
@@ -102,7 +103,8 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       autoPlay: false,
       allowFullScreen: false,
       aspectRatio: widget.submission.data['media']['reddit_video']['width'] / widget.submission.data['media']['reddit_video']['height'],
-      looping: SettingsService.getKey('content_video_loop')
+      looping: SettingsService.getKey('content_video_loop'),
+      autoInitialize: SettingsService.getKey('content_videos_preload'),
     );
 
     this._initializeVideoPlayerFuture.then((_) {
