@@ -74,13 +74,15 @@ class _SubredditScreenState extends State<SubredditScreen> {
     }
     
     this.newUserConentsubscription = this.userConent.listen((content) async {
+      if(!completer.isCompleted)
+      completer.complete();
+      if(this.mounted)
       setState(() {
         this.userContentList.add(content);
-        if(!completer.isCompleted) {
-          Future.delayed(Duration(milliseconds: 50)).then((x) {
-            completer.complete();
-          });
-        }
+        // if(!completer.isCompleted) {
+        //   Future.delayed(Duration(milliseconds: 50)).then((x) {
+        //   });
+        // }
       });
     });
     return completer.future;

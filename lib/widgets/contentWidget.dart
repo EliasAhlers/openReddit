@@ -33,12 +33,15 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
   @override
   void initState() {
-    if(widget.submission.url.toString().contains('imgur.com') || widget.submission.url.toString().contains('gfycat.com')) {
+    if(
+      (widget.submission.url.toString().contains('imgur.com') || widget.submission.url.toString().contains('gfycat.com')) && 
+      !widget.submission.url.toString().contains('.jpg') && !widget.submission.url.toString().contains('.png') 
+    ) {
       setState(() {
         this._contentType = 'GifProvider';
         this._prepareGifVideo();
       });
-    } else  if(widget.submission.url.toString().endsWith('.gif')) {
+    } else  if(widget.submission.url.toString().endsWith('.gif') || widget.submission.url.toString().endsWith('.gifv')) {
       setState(() {
         this._contentType = 'Gif';
       });
@@ -63,14 +66,12 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 
   void _prepareGifVideo() async {
-    List<Video> checkedUris = VideoProvider.fromUri(
+    List<Video> checkedUris = await CheckedVideoProvider.fromUri(
     Uri.parse(widget.submission.url.toString()),
-    ).getVideos();
+    ).getVideos().toList();
     _controller = VideoPlayerController.network(
       checkedUris[0].uri.toString(),
     );
-
-    _initializeVideoPlayerFuture = _controller.initialize();
 
     _chewieController = ChewieController(
       videoPlayerController: _controller,
@@ -79,15 +80,10 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       allowFullScreen: false,
       looping: SettingsService.getKey('content_gif_loop'),
       autoInitialize: SettingsService.getKey('content_gif_preload'),
+      
     );
-
-    _initializeVideoPlayerFuture.then((_) {
-      setState(() {
-        this._gifProviderReady = true;
-      });
-      if(SettingsService.getKey('content_gif_autoplay')) 
-        this._chewieController.play();
-      this._chewieController.setVolume(0);
+    setState(() {
+      this._gifProviderReady = true;
     });
   }
 
@@ -95,8 +91,6 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     _controller = VideoPlayerController.network(
       widget.submission.data['media']['reddit_video']['fallback_url']
     );
-
-    this._initializeVideoPlayerFuture = _controller.initialize();
 
     this._chewieController = ChewieController(
       videoPlayerController: _controller,
@@ -106,17 +100,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       looping: SettingsService.getKey('content_video_loop'),
       autoInitialize: SettingsService.getKey('content_videos_preload'),
     );
-
-    this._initializeVideoPlayerFuture.then((_) {
-      setState(() {
-        this._videoReady = true;
-      });
-      if(SettingsService.getKey('content_video_autoplay')) 
-        this._chewieController.play();
-      this._chewieController.setVolume(0);
+    setState(() {
+      this._videoReady = true;
     });
-
-
   }
 
   @override
@@ -166,7 +152,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getGif() {
-    return Image.network(widget.submission.url.toString());
+    return Image.network(
+      widget.submission.url.toString().replaceAll('.gifv', '.gifv'),
+    );
   }
 
   Widget _getYouTube() {
@@ -202,7 +190,6 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   String _getYouTubeId(String link) {
     link = link.replaceAll('https://', '').replaceAll('https://', '').replaceAll('&feature=youtu.be', '').replaceAll('www.', '');
     RegExp ytId = new RegExp('[a-zA-Z0-9}-]{11}');
-    print(ytId.stringMatch(link));
     return ytId.stringMatch(link); 
   }
 

@@ -2,6 +2,7 @@ import 'package:draw/draw.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/homeScreen.dart';
+import 'package:openReddit/screens/setupProcess/loginSetupScreen.dart';
 import 'package:openReddit/screens/setupProcess/readySetupScreen.dart';
 import 'package:openReddit/screens/setupProcess/welcomeSetupScreen.dart';
 import 'package:openReddit/services/redditService.dart';
@@ -35,34 +36,60 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              child: Center(
-                child: this.error ? 
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(this.errorText + ' '),
-                      Text(this.errorReason),
-                      ButtonTheme(
-                        child: RaisedButton(
-                          child: Text('Retry'),
-                          onPressed: () {
-                            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(setup: widget.setup); }));
-                          },
-                        ),
+      body: this.error ? Padding(
+        padding: const EdgeInsets.all(8),
+        child: Center(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(top: 120),
+                child: Text(
+                  'Oops!',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 55),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Hero(
+                  tag: 'SetupHelloGif',
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.6,
+                    height: MediaQuery.of(context).size.width * 0.6,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.network(
+                        'https://media.giphy.com/media/Rkis28kMJd1aE/giphy.gif'
                       )
-                    ],
-                  ) : Container(),
+                    ),
+                  ),
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 40),
+                child: Text(
+                  'Something went wrong while logging in! We asked our robot and it told us: ' + errorReason + 
+                  'Why don\'t you try again?',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Color.lerp(Colors.white, Colors.grey, 0.25),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 100),
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginSetupScreen(); }));
+                  },
+                  child: Text('Try again'),
+                ),
               )
-              ,
-            )
-          )
-        ],
-      ),
+            ],
+          ),
+        ),
+      ) : Text('If you see this, the dev fucked up. Sorry :)'),
     );
   }
 

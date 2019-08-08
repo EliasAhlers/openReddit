@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
+import 'package:openReddit/screens/setupProcess/welcomeSetupScreen.dart';
 import 'package:openReddit/services/settingsService.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -45,9 +46,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Divider(),
           RaisedButton(
             child: Text('Reset'),
-            onPressed: () {
+            onPressed: () async {
+              SettingsService.reset();
+              await SettingsService.init();
               setState(() {
-                SettingsService.reset();
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) { return WelcomeSetupScreen(); }));
               });
             },
           ),
