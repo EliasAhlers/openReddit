@@ -57,18 +57,17 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                     Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission,); }));
                   },
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Center(child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: ContentWidget(submission: widget.submission),
-                      )),
+                      Text(
+                        widget.submission.title,
+                        maxLines: 6,
+                        style: TextStyle(fontSize: 23)
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(4),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(widget.submission.title,
-                            maxLines: 6, style: TextStyle(fontSize: 23)),
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 2),
                               child: Row(
@@ -134,7 +133,11 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                             ) : Container(width: 0, height: 0),
                           ],
                         ),
-                      ), 
+                      ),
+                      Center(child: Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: ContentWidget(submission: widget.submission),
+                      )),
                     ],
                   ),
                 ),

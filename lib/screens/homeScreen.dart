@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/loginScreen.dart';
@@ -151,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 cacheExtent: 10,
                 itemBuilder: (BuildContext context, int index) {
                   if(this.subscribedSubreddits[index] != null) {
-                    if(this.subscribedSubreddits[index].iconImage != null && this.subscribedSubreddits[index].iconImage.toString() != '') 
+                    if(this.subscribedSubreddits[index].iconImage != null && this.subscribedSubreddits[index].iconImage.toString() != '')  {
+                      print(subscribedSubreddits[index].iconImage.toString());
                       return ListTile(
                         title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
                         leading: Container(
@@ -161,9 +163,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             shape: BoxShape.circle,
                             image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(
-                                this.subscribedSubreddits[index].iconImage.toString()
-                              ),
+                              image: CachedNetworkImageProvider(
+                                subscribedSubreddits[index].iconImage.toString().contains('/avatars/') ?
+                                'https://www.redditstatic.com' + subscribedSubreddits[index].iconImage.toString()
+                                : subscribedSubreddits[index].iconImage.toString()
+                              )
                             )
                           ),
                         ),
@@ -171,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this.subscribedSubreddits[index]); }));
                         },
                       );
+                    }
                     else return ListTile(
                       title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
                       leading: Container(

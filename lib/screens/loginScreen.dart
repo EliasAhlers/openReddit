@@ -113,6 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
             userAgent: SettingsService.getKey('redditUserAgent'),
             redirectUri: Uri.parse('https://thatseliyt.de/')
           );
+          SettingsService.setKey('redditCredentials', RedditService.reddit.auth.credentials.toJson());
+          SettingsService.save();
           if(widget.setup) {
             Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return ReadySetupScreen(); }));
           } else {

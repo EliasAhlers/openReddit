@@ -43,7 +43,7 @@ class _CommentWidgetState extends State<CommentWidget>
         left: widget.comment.depth != null ? (5* widget.comment.depth ?? 0).toDouble() : 0,
       ),
       child: Material(
-        elevation: (1 * widget.comment.depth + 1).toDouble(),
+        elevation: (1 * widget.comment.depth + 1 ?? 0).toDouble(),
         borderRadius: BorderRadius.circular(5),
         color: Color.lerp(Colors.black, Colors.grey, 0.35),
         child: Padding(
