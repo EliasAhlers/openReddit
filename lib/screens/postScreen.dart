@@ -52,7 +52,12 @@ class _PostScreenState extends State<PostScreen> {
                 ? Expanded(
                     child: CommentListWidget(
                     comments: this.comments,
-                    leading: PostWidget(submission: widget.submission, preview: false)
+                    leading: Column(
+                      children: <Widget>[
+                        PostWidget(submission: widget.submission, preview: false),
+                        Divider(),
+                      ],
+                    )
                   ))
                 : LinearProgressIndicator(),
             ],

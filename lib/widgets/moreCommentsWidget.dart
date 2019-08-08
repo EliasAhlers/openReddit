@@ -4,9 +4,8 @@ import 'package:openReddit/widgets/commentListWidget.dart';
 
 class MoreCommentsWidget extends StatefulWidget {
   final MoreComments moreComments;
-  final int depth;
 
-  MoreCommentsWidget({Key key, this.moreComments, this.depth}) : super(key: key);
+  MoreCommentsWidget({Key key, this.moreComments}) : super(key: key);
 
   _MoreCommentsWidgetState createState() => _MoreCommentsWidgetState();
 }
@@ -25,22 +24,21 @@ class _MoreCommentsWidgetState extends State<MoreCommentsWidget> {
     if(loading) {
       return LinearProgressIndicator();
     } else 
-    return ButtonTheme(
-      child: RaisedButton(
-        onPressed: () async {
-          setState(() {
-           this.loading = true; 
-          });
-          MoreComments moreComments = widget.moreComments;
-          List<dynamic> loadedCommentsDyn = await moreComments.comments(update: true);
-          setState(() {
-            this.loading = false;
-            this.loaded = true;
-            this.loadedComments = loadedCommentsDyn;
-          });
-        },
-        child: Text('Load more comments(' + widget.moreComments.count.toString() + ')'),
-      ),
+    return RaisedButton(
+      elevation: 5,
+      onPressed: () async {
+        setState(() {
+         this.loading = true; 
+        });
+        MoreComments moreComments = widget.moreComments;
+        List<dynamic> loadedCommentsDyn = await moreComments.comments(update: true);
+        setState(() {
+          this.loading = false;
+          this.loaded = true;
+          this.loadedComments = loadedCommentsDyn;
+        });
+      },
+      child: Text('Load more comments(' + widget.moreComments.count.toString() + ')'),
     );
   }
 
