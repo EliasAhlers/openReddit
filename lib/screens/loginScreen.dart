@@ -1,13 +1,18 @@
 import 'package:draw/draw.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/homeScreen.dart';
+import 'package:openReddit/screens/setupProcess/readySetupScreen.dart';
+import 'package:openReddit/screens/setupProcess/welcomeSetupScreen.dart';
 import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/tools/LoginAppBrowser.dart';
 import 'package:random_string/random_string.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key key}) : super(key: key);
+  final bool setup;
+
+  LoginScreen({Key key, this.setup = false}) : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -46,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: RaisedButton(
                           child: Text('Retry'),
                           onPressed: () {
-                            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
+                            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(setup: widget.setup); }));
                           },
                         ),
                       )
@@ -65,21 +70,32 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Function login = () {
 
+      if(!SettingsService.getKey('setupDone') && !widget.setup) {
+        Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return WelcomeSetupScreen(); }));
+        return;
+      }
+
       String redditCredentials = SettingsService.getKey('redditCredentials');
 
-      if(redditCredentials != '') {
+      if(redditCredentials != '' && !widget.setup) {
 
         try {
           RedditService.reddit = Reddit.restoreAuthenticatedInstance(
             redditCredentials,
             clientId: 'yG99FCjMF8tXaA',
-            userAgent: randomAlphaNumeric(10),
+            userAgent: SettingsService.getKey('redditUserAgent'),
             redirectUri: Uri.parse('https://thatseliyt.de/')
           );
-          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
+          if(widget.setup) {
+            Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return ReadySetupScreen(); }));
+          } else {
+            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
+          }
         } catch (e) {
           SettingsService.setKey('redditCredentials', ''); SettingsService.save();
-          Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
+          Future.delayed(Duration(milliseconds: 200)).then((_) {
+            Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(setup: widget.setup); }));
+          });
         }
         
 
@@ -138,8 +154,13 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
     SettingsService.setKey('redditCredentials', RedditService.reddit.auth.credentials.toJson());
+    SettingsService.setKey('redditUserAgent', RedditService.reddit.auth.userAgent);
     SettingsService.save();
-    Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
+    if(widget.setup) {
+      Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return ReadySetupScreen(); }));
+    } else {
+      Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return HomeScreen(); }));
+    }
   }
 
 }

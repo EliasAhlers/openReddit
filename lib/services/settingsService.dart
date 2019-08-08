@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:debug_mode/debug_mode.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -19,7 +20,9 @@ class SettingsService {
   static Future<void> init() async {
     Completer c = new Completer();
     _keys = {
-      'redditCredentials': { 'value': '', 'hidden': true, 'description': 'Right align for comment actions', 'category': 9999999 },
+      'setupDone': { 'value': false, 'hidden': true, 'description': '', 'category': 9999999 },
+      'redditCredentials': { 'value': '', 'hidden': true, 'description': '', 'category': 9999999 },
+      'redditUserAgent': { 'value': '', 'hidden': true, 'description': '', 'category': 9999999 },
       'content_gif_preload': { 'value': true, 'description': 'Preload gifs', 'category': 1 },
       'content_gif_autoplay': { 'value': true, 'description': 'Autoplay gifs', 'category': 1 },
       'content_gif_loop': { 'value': true, 'description': 'Loop gifs', 'category': 1 },
@@ -29,6 +32,12 @@ class SettingsService {
       'content_youtube_autoplay': { 'value': true, 'description': 'Autoplay youtube videos', 'category': 1 },
       'comment_actions_align_right': { 'value': true, 'description': 'Right align for comment actions', 'category': 2 },
     };
+    if(DebugMode.isInDebugMode) {
+      categorys.add('Debug');
+      _keys.addAll({
+        'closeDB': { 'value': () { SettingsService.close(); }, 'description': 'Close the app db', 'category': categorys.length-1 }
+      });
+    }    
     if(!_loadedDb) {
       _loadedDb = true;
       Directory appDoc = await getApplicationDocumentsDirectory();
@@ -36,6 +45,7 @@ class SettingsService {
       await load();
       c.complete();
       ready = true;
+      if(onReady != null)
       onReady();
     }
     return c.future;
@@ -56,6 +66,7 @@ class SettingsService {
       print('Error, did not find key '+ key);
       throw Error();
     }
+    if(_keys[key]['value'] is Function) return false;
     return _keys[key]['value'];
   }
 
@@ -72,13 +83,19 @@ class SettingsService {
       print('Error, did not find key '+ key);
       throw Error();
     }
+    if(_keys[key]['value'] is Function) {
+      _keys[key]['value']();
+      return;
+    }
     _keys[key]['value'] = value;
   }
 
   static save() {
     StoreRef store = StoreRef.main();
     _keys.forEach((key, value) async {
-      store.record(key).put(_db, value['value']);
+      if(!(value['value'] is Function)) {
+        store.record(key).put(_db, value['value']);
+      }
     });
   }
 
@@ -106,8 +123,8 @@ class SettingsService {
     return;
   }
 
-  static void close() {
-    _db.close();
+  static void close() async {
+    await _db.close();
   }
 
 }

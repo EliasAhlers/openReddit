@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    
     this.loadFrontpage();
     this.loadSubscribedSubreddits();
     super.initState();
@@ -31,13 +32,18 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       this.submissions = [];
     });
-    RedditService.reddit.front.best().listen((submission) {
-      if(this.mounted) {
-        setState(() {
-          this.submissions.add(submission);
-        });
-      }
-    });
+    try {
+      RedditService.reddit.front.best().listen((submission) {
+        if(this.mounted) {
+          setState(() {
+            this.submissions.add(submission);
+          });
+        }
+      });
+    } catch (e) {
+      SettingsService.setKey('redditCredentials', ''); SettingsService.save();
+      Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(); }));
+    }
   }
 
   void loadPopular() async {
