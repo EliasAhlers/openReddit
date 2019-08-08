@@ -127,27 +127,24 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
         ? widget.submission.preview.elementAt(0).source.url.toString()
         : '';
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(4),
-      child: GestureDetector(
-        onTap: !this._showSpoiler ? () {
+    return GestureDetector(
+      onTap: !this._showSpoiler ? () {
+        setState(() {
+          this._showSpoiler = true;
+        });
+      } : null,
+      onLongPress: () {
+        if(this._showSpoiler)
           setState(() {
-            this._showSpoiler = true;
+            this._showSpoiler = false;
           });
-        } : null,
-        onLongPress: () {
-          if(this._showSpoiler)
-            setState(() {
-              this._showSpoiler = false;
-            });
-        },
-        child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
-          alignment: Alignment.center,
-          fit: BoxFit.cover,
-        ),
-      )
+      },
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
+        alignment: Alignment.center,
+        fit: BoxFit.cover,
+      ),
     );
   }
 
@@ -202,25 +199,32 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
 
+    Widget content;
+
     switch (this._contentType) {
       case 'GifProvider':
-        return this._getGifProvider();
+        content = this._getGifProvider();
         break;
       case 'Image':
-        return this._getImage();
+        content = this._getImage();
         break;
       case 'Gif':
-        return this._getGif();
+        content = this._getGif();
         break;
       case 'YouTube':
-        return this._getYouTube();
+        content = this._getYouTube();
         break;
       case 'Video':
-        return this._getVideo();
+        content = this._getVideo();
         break;
       default:
         return Container(width: 0, height: 0);
     }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: content,
+    );
 
   }
 

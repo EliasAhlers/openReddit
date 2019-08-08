@@ -64,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Redditor me = await RedditService.reddit.user.me();
     me.saved().listen((submission) {
       setState(() {
+        if(submission is Submission)
         this.submissions.add(submission);
       });
     });
@@ -198,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text('Reddit'),
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: this.submissions.length > 0 ?
           SubmissionsWidget(submissions: this.submissions) : LinearProgressIndicator(),
       ),
