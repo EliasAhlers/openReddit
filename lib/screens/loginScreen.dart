@@ -107,11 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if(redditCredentials != '' && !widget.setup) {
 
         try {
-          RedditService.reddit = Reddit.restoreAuthenticatedInstance(
+          RedditService.reddit = Reddit.restoreInstalledAuthenticatedInstance(
             redditCredentials,
             clientId: 'yG99FCjMF8tXaA',
             userAgent: SettingsService.getKey('redditUserAgent'),
-            redirectUri: Uri.parse('https://thatseliyt.de/')
           );
           SettingsService.setKey('redditCredentials', RedditService.reddit.auth.credentials.toJson());
           SettingsService.save();

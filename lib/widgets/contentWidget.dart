@@ -29,7 +29,6 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   VideoPlayerController _controller;
   ChewieController _chewieController;
   YoutubePlayerController _ytController;
-  Future<void> _initializeVideoPlayerFuture;
 
   @override
   void initState() {

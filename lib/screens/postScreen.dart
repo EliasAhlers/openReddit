@@ -52,6 +52,7 @@ class _PostScreenState extends State<PostScreen> {
                 ? Expanded(
                     child: CommentListWidget(
                     comments: this.comments,
+                    highlightUserName: widget.submission.author,
                     leading: Column(
                       children: <Widget>[
                         PostWidget(submission: widget.submission, preview: false),

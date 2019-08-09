@@ -90,8 +90,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: bee2bf08a65b1dbe0dd30ab1156981ffb322c5c4
-      url: "git://github.com/draw-dev/DRAW.git"
+      resolved-ref: "75470b1043d9b21d2212ac5b9265ba7d4872e675"
+      url: "git://github.com/ThatsEli/DRAW.git"
     source: git
     version: "0.7.0"
   flutter:

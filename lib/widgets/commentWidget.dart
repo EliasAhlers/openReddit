@@ -11,8 +11,9 @@ import 'package:openReddit/widgets/expandedSectionWidget.dart';
 class CommentWidget extends StatefulWidget {
   final Comment comment;
   final bool collapsed;
+  final bool highlightAuthor;
 
-  CommentWidget({Key key, this.comment, this.collapsed = false})
+  CommentWidget({Key key, this.comment, this.collapsed = false, this.highlightAuthor = false})
       : super(key: key);
 
   _CommentWidgetState createState() => _CommentWidgetState();
@@ -66,6 +67,12 @@ class _CommentWidgetState extends State<CommentWidget>
                           widget.comment.author,
                           style: TextStyle(color: Colors.blueAccent),
                         ),
+                        if(widget.highlightAuthor)
+                          Icon(
+                            FontAwesomeIcons.microphone,
+                            color: Colors.green,
+                            size: 12.5,
+                          ),
                         if (widget.comment.authorFlairText != null)
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 5),

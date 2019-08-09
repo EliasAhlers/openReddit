@@ -10,8 +10,9 @@ class CommentListWidget extends StatefulWidget {
   final List<dynamic> comments;
   final Widget leading;
   final bool noScroll;
+  final String highlightUserName;
 
-  CommentListWidget({Key key, this.comments, this.leading, this.noScroll = false}) : super(key: key);
+  CommentListWidget({Key key, this.comments, this.leading, this.noScroll = false, this.highlightUserName = ''}) : super(key: key);
 
   _CommentListWidgetState createState() => _CommentListWidgetState();
 }
@@ -101,7 +102,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
               onTap: () {
                 
               },
-              child: !_hiddenComments.contains(com.id) ? CommentWidget(comment: com, collapsed: _collapsedComments.contains(com.id)) : Container(width: 0, height: 0),
+              child: !_hiddenComments.contains(com.id) ? CommentWidget(comment: com, highlightAuthor: com.author == widget.highlightUserName, collapsed: _collapsedComments.contains(com.id)) : Container(width: 0, height: 0),
             ); 
           else
           return !_hiddenComments.contains(com.id) ? MoreCommentsWidget(moreComments: com) : Container(width: 0, height: 0);

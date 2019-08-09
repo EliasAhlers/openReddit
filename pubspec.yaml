@@ -29,7 +29,7 @@ dependencies:
   # draw: any
   draw:
     git:
-      url: git://github.com/draw-dev/DRAW.git
+      url: git://github.com/ThatsEli/DRAW.git
   vibration: 1.1.0
   cached_network_image: ^1.1.1
   flutter_inappbrowser: ^1.2.1
