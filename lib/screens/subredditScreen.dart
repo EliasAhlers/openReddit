@@ -17,13 +17,13 @@ class SubredditScreen extends StatefulWidget {
 }
 
 class _SubredditScreenState extends State<SubredditScreen> {
-  List<UserContent> userContentList = [];
-  List<Rule> rules;
-  Stream<UserContent> userConent;
-  String sortMethod = 'Hot';
-  StreamSubscription<UserContent> newUserConentsubscription;
-  bool ready = false;
-  Subreddit subreddit;
+  List<UserContent> _userContentList = [];
+  List<Rule> _rules;
+  Stream<UserContent> _userConent;
+  String _sortMethod = 'Hot';
+  StreamSubscription<UserContent> _newUserConentsubscription;
+  bool _ready = false;
+  Subreddit _subreddit;
 
   @override
   void initState() {
@@ -33,56 +33,52 @@ class _SubredditScreenState extends State<SubredditScreen> {
 
   void populate() async {
     if(widget.futureSubreddit != null) {
-      subreddit = await widget.futureSubreddit;
+      _subreddit = await widget.futureSubreddit;
       await this.getSubmissions();
       setState(() {
-        ready = true;
+        _ready = true;
       });
     } else {
-      subreddit = widget.subreddit;
+      _subreddit = widget.subreddit;
       await this.getSubmissions();
       setState(() {
-        ready = true;
+        _ready = true;
       });
     }
     this.getRules();
   }
 
   void getRules() async {
-    List<Rule> rules = await subreddit.rules();
+    List<Rule> rules = await _subreddit.rules();
     setState(() {
-      this.rules = rules;
+      this._rules = rules;
     });
   }
 
   Future<void> getSubmissions() async {
     Completer completer = new Completer();
 
-    if(this.newUserConentsubscription != null) {
-      this.newUserConentsubscription.cancel();
+    if(this._newUserConentsubscription != null) {
+      this._newUserConentsubscription.cancel();
     }
     setState(() {
-      this.userContentList = [];
-      this.ready = false;
+      this._userContentList = [];
+      this._ready = false;
     });
-    switch (this.sortMethod) {
-      case 'Hot': this.userConent = subreddit.hot(); break;
-      case 'Top': this.userConent = subreddit.top(); break;
-      case 'New': this.userConent = subreddit.newest(); break;
-      case 'Rising': this.userConent = subreddit.rising(); break;
-      case 'Controversial': this.userConent = subreddit.controversial(); break;
+    switch (this._sortMethod) {
+      case 'Hot': this._userConent = _subreddit.hot(); break;
+      case 'Top': this._userConent = _subreddit.top(); break;
+      case 'New': this._userConent = _subreddit.newest(); break;
+      case 'Rising': this._userConent = _subreddit.rising(); break;
+      case 'Controversial': this._userConent = _subreddit.controversial(); break;
     }
     
-    this.newUserConentsubscription = this.userConent.listen((content) async {
+    this._newUserConentsubscription = this._userConent.listen((content) async {
       if(!completer.isCompleted)
       completer.complete();
       if(this.mounted)
       setState(() {
-        this.userContentList.add(content);
-        // if(!completer.isCompleted) {
-        //   Future.delayed(Duration(milliseconds: 50)).then((x) {
-        //   });
-        // }
+        this._userContentList.add(content);
       });
     });
     return completer.future;
@@ -90,7 +86,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(ready) {
+    if(_ready) {
       return Scaffold(
         endDrawer: Drawer(
           child: Padding(
@@ -105,14 +101,14 @@ class _SubredditScreenState extends State<SubredditScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
-                          image: NetworkImage(subreddit.iconImage.toString() ?? '')
+                          image: NetworkImage(_subreddit.iconImage.toString() ?? '')
                         )
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
-                        'r/' + subreddit.displayName,
+                        'r/' + _subreddit.displayName,
                         style: TextStyle(
                           fontSize: 30
                         ),
@@ -121,22 +117,22 @@ class _SubredditScreenState extends State<SubredditScreen> {
                   ],
                 ),
                 Text(
-                  subreddit.data['public_description'],
+                  _subreddit.data['public_description'],
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Divider(height: 5),
                 ),
                 Text('Subreddit rules:'),
-                this.rules != null ? 
+                this._rules != null ? 
                 Expanded(
                   child: ListView.separated(
-                    itemCount: this.rules.length,
+                    itemCount: this._rules.length,
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       return ListTile(
-                        title: Text(this.rules[index].shortName),
-                        subtitle: Text(this.rules[index].description),
+                        title: Text(this._rules[index].shortName),
+                        subtitle: Text(this._rules[index].description),
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {
@@ -150,10 +146,10 @@ class _SubredditScreenState extends State<SubredditScreen> {
           ),
         ),
         appBar: AppBar(
-          title: Text('r/' + subreddit.displayName),
+          title: Text('r/' + _subreddit.displayName),
           actions: <Widget>[
             DropdownButton(
-              value: this.sortMethod,
+              value: this._sortMethod,
               items: ['Top', 'Hot', 'New', 'Rising', 'Controversial'].map((String val) {
                 return DropdownMenuItem(
                   value: val,
@@ -177,11 +173,11 @@ class _SubredditScreenState extends State<SubredditScreen> {
               }).toList(),
               onChanged: (newVal) async {
                 setState(() {
-                  this.sortMethod = newVal;
+                  this._sortMethod = newVal;
                 });
                 await this.getSubmissions();
                 setState(() {
-                  this.ready = true;
+                  this._ready = true;
                 });
               },
             )
@@ -194,7 +190,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SubmissionsWidget(
-              submissions: this.userContentList.cast<Submission>(),
+              submissions: this._userContentList.cast<Submission>(),
               leading: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -204,14 +200,14 @@ class _SubredditScreenState extends State<SubredditScreen> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        image: NetworkImage(subreddit.iconImage.toString() ?? '')
+                        image: NetworkImage(_subreddit.iconImage.toString() ?? '')
                       )
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: Text(
-                      'r/' + subreddit.displayName,
+                      'r/' + _subreddit.displayName,
                       style: TextStyle(
                         fontSize: 30
                       ),

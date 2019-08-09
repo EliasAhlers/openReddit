@@ -15,9 +15,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
-  Redditor redditor;
-  List<Submission> posts = [];
-  List<Comment> comments = [];
+  Redditor _redditor;
+  List<Submission> _posts = [];
+  List<Comment> _comments = [];
 
   @override
   void initState() {
@@ -29,23 +29,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if(widget.redditorRef != null) {
       Redditor populatedRedditor = await widget.redditorRef.populate();
       setState(() {
-        redditor = populatedRedditor;
+        _redditor = populatedRedditor;
       });
     } else {
       setState(() {
-        redditor = widget.redditor;
+        _redditor = widget.redditor;
       });
     }
     this.getUserContent();
   }
 
   void getUserContent() async {
-    List<UserContent> userContents = await redditor.newest().toList();
+    List<UserContent> userContents = await _redditor.newest().toList();
     userContents.forEach((userContent) async {
       if(userContent is Submission) {
-        posts.add(userContent);
+        _posts.add(userContent);
       } else if(userContent is Comment) {
-        comments.add(userContent);
+        _comments.add(userContent);
       }
     });
     if(this.mounted)
@@ -54,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if(redditor == null) 
+    if(_redditor == null) 
     return Scaffold(
       body: Center(
         child: Text('Loading...'),
@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    if(Uri.parse(redditor.data['icon_img'].toString()).path != '')
+                    if(Uri.parse(_redditor.data['icon_img'].toString()).path != '')
                       Container(
                         width: 100,
                         height: 100,
@@ -90,16 +90,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fit: BoxFit.cover,
                             image: NetworkImage(
                               Uri.parse(
-                                redditor.data['icon_img'].toString().contains('/avatar/') ?
-                                'https://www.redditstatic.com' + redditor.data['icon_img'].toString() :
-                                redditor.data['icon_img'].toString()
+                                _redditor.data['icon_img'].toString().contains('/avatar/') ?
+                                'https://www.redditstatic.com' + _redditor.data['icon_img'].toString() :
+                                _redditor.data['icon_img'].toString()
                               ).path,
                             ),
                           )
                         ),
                       ),
                     Text(
-                      'u/' + redditor.displayName,
+                      'u/' + _redditor.displayName,
                       style: TextStyle(
                         fontSize: 30
                       ),
@@ -108,21 +108,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
                 Text(
-                  'Karma: ' + redditor.linkKarma.toString()
+                  'Karma: ' + _redditor.linkKarma.toString()
                 ),
                 Text(
-                  'Commentkarma: ' + redditor.commentKarma.toString()
+                  'Commentkarma: ' + _redditor.commentKarma.toString()
                 )
               ],
             ),
-            if(posts.length == 0)
+            if(_posts.length == 0)
               LinearProgressIndicator(),
-            if(posts.length != 0)
-              SubmissionsWidget(submissions: posts),
-            if(comments.length == 0)
+            if(_posts.length != 0)
+              SubmissionsWidget(submissions: _posts),
+            if(_comments.length == 0)
               LinearProgressIndicator(),
-            if(comments.length != 0)
-              CommentListWidget(comments: comments)
+            if(_comments.length != 0)
+              CommentListWidget(comments: _comments)
           ],
         )
       ),

@@ -15,7 +15,7 @@ class SubmissionsWidget extends StatefulWidget {
 
 class _SubmissionsWidgetState extends State<SubmissionsWidget> {
 
-  List<Submission> submissions = [];
+  List<Submission> _submissions = [];
 
   @override
   void initState() {
@@ -23,12 +23,12 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
       widget.userConentStream.listen((submission) {
         if(submission is Submission) {
           setState(() {
-            submissions.add(submission);
+            _submissions.add(submission);
           });
         }
       });
     } else {
-      submissions = widget.submissions;
+      _submissions = widget.submissions;
     }
     super.initState();
   }
@@ -36,20 +36,20 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: submissions.length + 1,
+      itemCount: _submissions.length + 1,
       cacheExtent: 10,
       itemBuilder: (BuildContext context, int index) {
         if(index == 0 && widget.leading != null) {
           return widget.leading;
         }
-        if(index+5 < submissions.length-1) {
-          if(submissions[index+5].preview.length > 0) {
-            precacheImage(NetworkImage(submissions[index+5].preview.elementAt(0).source.url.toString()), context);
+        if(index+5 < _submissions.length-1) {
+          if(_submissions[index+5].preview.length > 0) {
+            precacheImage(NetworkImage(_submissions[index+5].preview.elementAt(0).source.url.toString()), context);
           }
         }
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PostWidget(submission: submissions[index+1], preview: true),
+          child: PostWidget(submission: _submissions[index+1], preview: true),
         );
       },
       separatorBuilder: (BuildContext context, int index) {

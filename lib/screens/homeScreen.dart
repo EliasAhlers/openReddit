@@ -18,8 +18,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  List<Submission> submissions = [];
-  List<Subreddit> subscribedSubreddits = <Subreddit>[];
+  List<Submission> _submissions = [];
+  List<Subreddit> _subscribedSubreddits = <Subreddit>[];
 
   @override
   void initState() {
@@ -31,13 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void loadFrontpage() async {
     setState(() {
-      this.submissions = [];
+      this._submissions = [];
     });
     try {
       RedditService.reddit.front.best().listen((submission) {
         if(this.mounted) {
           setState(() {
-            this.submissions.add(submission);
+            this._submissions.add(submission);
           });
         }
       });
@@ -49,24 +49,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void loadPopular() async {
     setState(() {
-      this.submissions = [];
+      this._submissions = [];
     });
     RedditService.reddit.front.top(timeFilter: TimeFilter.day).listen((submission) {
       setState(() {
-        this.submissions.add(submission);
+        this._submissions.add(submission);
       });
     });
   }
 
   void loadSaved() async {
     setState(() {
-      this.submissions = [];
+      this._submissions = [];
     });
     Redditor me = await RedditService.reddit.user.me();
     me.saved().listen((submission) {
       setState(() {
         if(submission is Submission)
-        this.submissions.add(submission);
+        this._submissions.add(submission);
       });
     });
   }
@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void loadSubscribedSubreddits() {
     RedditService.reddit.user.subreddits().listen((Subreddit subreddit) {
       setState(() {
-        this.subscribedSubreddits.add(subreddit);
+        this._subscribedSubreddits.add(subreddit);
       });
     });
     return;
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Home'),
               onTap: () {
                 setState(() {
-                  this.submissions = null;
+                  this._submissions = null;
                 });
                 Navigator.pop(context);
                 this.loadFrontpage();
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Popular'),
               onTap: () {
                 setState(() {
-                  this.submissions = null;
+                  this._submissions = null;
                 });
                 Navigator.pop(context);
                 this.loadPopular();
@@ -138,24 +138,24 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Saved'),
               onTap: () {
                 setState(() {
-                  this.submissions = null;
+                  this._submissions = null;
                 });
                 Navigator.pop(context);
                 this.loadSaved();
               },
             ),
             Divider(),
-            this.subscribedSubreddits != null ?
+            this._subscribedSubreddits != null ?
               Expanded(child: ListView.builder(
-                itemCount: this.subscribedSubreddits.length,
+                itemCount: this._subscribedSubreddits.length,
                 addAutomaticKeepAlives: true,
                 cacheExtent: 10,
                 itemBuilder: (BuildContext context, int index) {
-                  if(this.subscribedSubreddits[index] != null) {
-                    if(this.subscribedSubreddits[index].iconImage != null && this.subscribedSubreddits[index].iconImage.toString() != '')  {
-                      print(subscribedSubreddits[index].iconImage.toString());
+                  if(this._subscribedSubreddits[index] != null) {
+                    if(this._subscribedSubreddits[index].iconImage != null && this._subscribedSubreddits[index].iconImage.toString() != '')  {
+                      print(_subscribedSubreddits[index].iconImage.toString());
                       return ListTile(
-                        title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
+                        title: Text(this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -164,26 +164,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             image: DecorationImage(
                               fit: BoxFit.cover,
                               image: CachedNetworkImageProvider(
-                                subscribedSubreddits[index].iconImage.toString().contains('/avatars/') ?
-                                'https://www.redditstatic.com' + subscribedSubreddits[index].iconImage.toString()
-                                : subscribedSubreddits[index].iconImage.toString()
+                                _subscribedSubreddits[index].iconImage.toString().contains('/avatars/') ?
+                                'https://www.redditstatic.com' + _subscribedSubreddits[index].iconImage.toString()
+                                : _subscribedSubreddits[index].iconImage.toString()
                               )
                             )
                           ),
                         ),
                         onTap: () {
-                          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this.subscribedSubreddits[index]); }));
+                          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this._subscribedSubreddits[index]); }));
                         },
                       );
                     }
                     else return ListTile(
-                      title: Text(this.subscribedSubreddits[index].displayName ?? 'Error while loading'),
+                      title: Text(this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
                       leading: Container(
                         width: 40,
                         height: 40,
                       ),
                       onTap: () {
-                        Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this.subscribedSubreddits[index]); }));
+                        Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: this._subscribedSubreddits[index]); }));
                       },
                     ); 
                   } else return Container(width: 0, height: 0);
@@ -205,8 +205,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4),
-        child: this.submissions.length > 0 ?
-          SubmissionsWidget(submissions: this.submissions) : LinearProgressIndicator(),
+        child: this._submissions.length > 0 ?
+          SubmissionsWidget(submissions: this._submissions) : LinearProgressIndicator(),
       ),
     );
   }

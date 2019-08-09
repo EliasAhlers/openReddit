@@ -25,13 +25,13 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMixin {
-  VoteState votedState;
-  bool saved;
+  VoteState _votedState;
+  bool _saved;
 
   @override
   void initState() {
-    this.votedState = widget.submission.vote;
-    this.saved = widget.submission.saved;
+    this._votedState = widget.submission.vote;
+    this._saved = widget.submission.saved;
     super.initState();
   }
 
@@ -145,14 +145,14 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                   children: <Widget>[
                     IconButton(
                       icon: Icon(FontAwesomeIcons.arrowCircleUp),
-                      color: votedState == VoteState.upvoted ? Colors.red : null,
+                      color: _votedState == VoteState.upvoted ? Colors.red : null,
                       onPressed: () {
                         setState(() {
                           VoteState newVoteState =
-                              votedState == VoteState.upvoted
+                              _votedState == VoteState.upvoted
                                   ? VoteState.none
                                   : VoteState.upvoted;
-                          votedState = newVoteState;
+                          _votedState = newVoteState;
                           if (newVoteState == VoteState.upvoted)
                             widget.submission.upvote();
                           else
@@ -162,14 +162,14 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                     ),
                     IconButton(
                       icon: Icon(FontAwesomeIcons.arrowCircleDown),
-                      color: votedState == VoteState.downvoted ? Colors.blue : null,
+                      color: _votedState == VoteState.downvoted ? Colors.blue : null,
                       onPressed: () {
                         setState(() {
                           VoteState newVoteState =
-                              votedState == VoteState.downvoted
+                              _votedState == VoteState.downvoted
                                   ? VoteState.none
                                   : VoteState.downvoted;
-                          votedState = newVoteState;
+                          _votedState = newVoteState;
                           if (newVoteState == VoteState.downvoted)
                             widget.submission.downvote();
                           else
@@ -178,12 +178,12 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                       },
                     ),
                     IconButton(
-                      icon: Icon(saved ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
-                      color: saved ? Colors.yellowAccent : null,
+                      icon: Icon(_saved ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
+                      color: _saved ? Colors.yellowAccent : null,
                       onPressed: () {
                         setState(() {
-                          saved = !saved;
-                          if (saved)
+                          _saved = !_saved;
+                          if (_saved)
                             widget.submission.save();
                           else
                             widget.submission.unsave();

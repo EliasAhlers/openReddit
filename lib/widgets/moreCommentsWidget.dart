@@ -11,31 +11,31 @@ class MoreCommentsWidget extends StatefulWidget {
 }
 
 class _MoreCommentsWidgetState extends State<MoreCommentsWidget> {
-  bool loaded = false;
-  bool loading = false;
-  List<dynamic> loadedComments = <dynamic>[];
+  bool _loaded = false;
+  bool _loading = false;
+  List<dynamic> _loadedComments = <dynamic>[];
 
   @override
   Widget build(BuildContext context) {
-    if(loaded) {
-      return CommentListWidget(comments: this.loadedComments, noScroll: true);
+    if(_loaded) {
+      return CommentListWidget(comments: this._loadedComments, noScroll: true);
     } else
 
-    if(loading) {
+    if(_loading) {
       return LinearProgressIndicator();
     } else 
     return RaisedButton(
       elevation: 5,
       onPressed: () async {
         setState(() {
-         this.loading = true; 
+         this._loading = true; 
         });
         MoreComments moreComments = widget.moreComments;
         List<dynamic> loadedCommentsDyn = await moreComments.comments(update: true);
         setState(() {
-          this.loading = false;
-          this.loaded = true;
-          this.loadedComments = loadedCommentsDyn;
+          this._loading = false;
+          this._loaded = true;
+          this._loadedComments = loadedCommentsDyn;
         });
       },
       child: Text('Load more comments(' + widget.moreComments.count.toString() + ')'),

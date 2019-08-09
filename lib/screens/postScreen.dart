@@ -14,8 +14,7 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  List<dynamic> comments;
-  bool enableShrinkWrap = true;
+  List<dynamic> _comments;
 
   @override
   void initState() {
@@ -27,7 +26,7 @@ class _PostScreenState extends State<PostScreen> {
     Completer c = new Completer();
     widget.submission.refreshComments().then((val) {
       setState(() {
-        this.comments = widget.submission.comments.comments;
+        this._comments = widget.submission.comments.comments;
       });
       c.complete();
     });
@@ -48,10 +47,10 @@ class _PostScreenState extends State<PostScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Column(
             children: <Widget>[
-              this.comments != null
+              this._comments != null
                 ? Expanded(
                     child: CommentListWidget(
-                    comments: this.comments,
+                    comments: this._comments,
                     highlightUserName: widget.submission.author,
                     leading: Column(
                       children: <Widget>[

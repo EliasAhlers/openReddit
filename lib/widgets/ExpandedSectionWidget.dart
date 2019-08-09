@@ -14,8 +14,8 @@ class ExpandedSectionWidget extends StatefulWidget {
 }
 
 class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with SingleTickerProviderStateMixin {
-  AnimationController expandController;
-  Animation<double> animation; 
+  AnimationController _expandController;
+  Animation<double> _animation; 
 
   @override
   void initState() {
@@ -25,15 +25,15 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
 
   ///Setting up the animation
   void prepareAnimations() {
-    expandController = AnimationController(
+    _expandController = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: widget.duration)
     );
     Animation curve = CurvedAnimation(
-      parent: expandController,
+      parent: _expandController,
       curve: Curves.fastOutSlowIn,
     );
-    animation = Tween(begin: 0.0, end: 1.0).animate(curve)
+    _animation = Tween(begin: 0.0, end: 1.0).animate(curve)
       ..addListener(() {
         setState(() {});
       }
@@ -44,16 +44,16 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
   void didUpdateWidget(ExpandedSectionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(widget.expand) {
-      expandController.forward();
+      _expandController.forward();
     }
     else {
-      expandController.reverse();
+      _expandController.reverse();
     }
   }
 
   @override
   void dispose() {
-    expandController.dispose();
+    _expandController.dispose();
     super.dispose();
   }
 
@@ -61,7 +61,7 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
   Widget build(BuildContext context) {
     return SizeTransition(
       axisAlignment: 1.0,
-      sizeFactor: animation,
+      sizeFactor: _animation,
       child: widget.child
     );
   }

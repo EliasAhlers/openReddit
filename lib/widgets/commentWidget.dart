@@ -21,14 +21,14 @@ class CommentWidget extends StatefulWidget {
 
 class _CommentWidgetState extends State<CommentWidget>
     with AutomaticKeepAliveClientMixin {
-  VoteState voteState;
-  bool saved;
-  bool actionsCollapsed = true;
+  VoteState _voteState;
+  bool _saved;
+  bool _actionsCollapsed = true;
 
   @override
   void initState() {
-    this.voteState = widget.comment.vote;
-    this.saved = widget.comment.saved;
+    this._voteState = widget.comment.vote;
+    this._saved = widget.comment.saved;
     super.initState();
   }
 
@@ -52,7 +52,7 @@ class _CommentWidgetState extends State<CommentWidget>
           child: GestureDetector(
             onTap: () {
               setState(() {
-                this.actionsCollapsed = !this.actionsCollapsed;
+                this._actionsCollapsed = !this._actionsCollapsed;
               });
             },
             child: Container(
@@ -104,9 +104,9 @@ class _CommentWidgetState extends State<CommentWidget>
                                 ? '-'
                                 : widget.comment.score.toString(),
                             style: TextStyle(
-                                color: this.voteState == VoteState.upvoted
+                                color: this._voteState == VoteState.upvoted
                                     ? Colors.redAccent
-                                    : this.voteState == VoteState.downvoted
+                                    : this._voteState == VoteState.downvoted
                                         ? Colors.blueAccent
                                         : null),
                           ),
@@ -125,7 +125,7 @@ class _CommentWidgetState extends State<CommentWidget>
                           },
                         ),
                         ExpandedSectionWidget(
-                          expand: !this.actionsCollapsed,
+                          expand: !this._actionsCollapsed,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5),
                             child: Row(
@@ -133,15 +133,15 @@ class _CommentWidgetState extends State<CommentWidget>
                             children: <Widget>[
                               IconButton(
                                 icon: Icon(FontAwesomeIcons.arrowCircleUp),
-                                color: voteState == VoteState.upvoted ? Colors.red : null,
+                                color: _voteState == VoteState.upvoted ? Colors.red : null,
                                 onPressed: () {
                                   setState(() {
-                                    actionsCollapsed = true;
+                                    _actionsCollapsed = true;
                                     VoteState newVoteState =
-                                        voteState == VoteState.upvoted
+                                        _voteState == VoteState.upvoted
                                             ? VoteState.none
                                             : VoteState.upvoted;
-                                    voteState = newVoteState;
+                                    _voteState = newVoteState;
                                     if (newVoteState == VoteState.upvoted)
                                       widget.comment.upvote();
                                     else
@@ -151,15 +151,15 @@ class _CommentWidgetState extends State<CommentWidget>
                               ),
                               IconButton(
                                 icon: Icon(FontAwesomeIcons.arrowCircleDown),
-                                color: voteState == VoteState.downvoted ? Colors.blue : null,
+                                color: _voteState == VoteState.downvoted ? Colors.blue : null,
                                 onPressed: () {
                                   setState(() {
-                                    actionsCollapsed = true;
+                                    _actionsCollapsed = true;
                                     VoteState newVoteState =
-                                        voteState == VoteState.downvoted
+                                        _voteState == VoteState.downvoted
                                             ? VoteState.none
                                             : VoteState.downvoted;
-                                    voteState = newVoteState;
+                                    _voteState = newVoteState;
                                     if (newVoteState == VoteState.downvoted)
                                       widget.comment.downvote();
                                     else
@@ -168,13 +168,13 @@ class _CommentWidgetState extends State<CommentWidget>
                                 },
                               ),
                               IconButton(
-                                icon: Icon(saved ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
-                                color: saved ? Colors.yellowAccent : null,
+                                icon: Icon(_saved ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
+                                color: _saved ? Colors.yellowAccent : null,
                                 onPressed: () {
                                   setState(() {
-                                    actionsCollapsed = true;
-                                    saved = !saved;
-                                    if (saved)
+                                    _actionsCollapsed = true;
+                                    _saved = !_saved;
+                                    if (_saved)
                                       widget.comment.save();
                                     else
                                       widget.comment.unsave();

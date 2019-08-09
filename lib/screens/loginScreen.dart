@@ -20,15 +20,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   
-  bool error = false;
-  String errorText = '';
-  String errorReason = '';
-  String state = randomAlphaNumeric(16);
-  LoginAppBrowser loginAppBrowser;
+  bool _error = false;
+  String _errorReason = '';
+  String _state = randomAlphaNumeric(16);
+  LoginAppBrowser _loginAppBrowser;
 
   @override
   void initState() { 
-    this.loginAppBrowser = new LoginAppBrowser();
+    this._loginAppBrowser = new LoginAppBrowser();
     this.loginToReddit();
     super.initState();
   }
@@ -36,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: this.error ? Padding(
+      body: this._error ? Padding(
         padding: const EdgeInsets.all(8),
         child: Center(
           child: Column(
@@ -68,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 40),
                 child: Text(
-                  'Something went wrong while logging in! We asked our robot and it told us: ' + errorReason + 
+                  'Something went wrong while logging in! We asked our robot and it told us: ' + _errorReason + 
                   'Why don\'t you try again?',
                   style: TextStyle(
                     fontSize: 25,
@@ -135,21 +134,20 @@ class _LoginScreenState extends State<LoginScreen> {
           redirectUri: Uri.parse('https://thatseliyt.de/')
         );
 
-        final String authUrl = RedditService.reddit.auth.url(['*'], this.state, compactLogin: true).toString();
-        this.loginAppBrowser.setCallbacks(
+        final String authUrl = RedditService.reddit.auth.url(['*'], this._state, compactLogin: true).toString();
+        this._loginAppBrowser.setCallbacks(
           codeCallback: (String code) {
             this.confirmRedditLogin(code);
           },
           errorCallback: (String errorReason) {
             setState(() {
-              this.error = true;
-              this.errorText = 'Error while authenticating, please try again.';
-              this.errorReason = errorReason;
+              this._error = true;
+              this._errorReason = errorReason;
             });
           },
-          state: this.state
+          state: this._state
         );
-        this.loginAppBrowser.open(
+        this._loginAppBrowser.open(
           url: authUrl,
           options: {
             'transparentBackground': true,
@@ -174,10 +172,9 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await RedditService.reddit.auth.authorize(code);
     } catch (e) {
-      this.loginAppBrowser.close();
+      this._loginAppBrowser.close();
       setState(() {
-        this.error = true;
-        this.errorText = 'Error while authenticating! Please try again'; 
+        this._error = true;
       });
       return;
     }
