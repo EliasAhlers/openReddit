@@ -39,6 +39,7 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
       itemCount: _submissions.length + 1,
       cacheExtent: 10,
       itemBuilder: (BuildContext context, int index) {
+        if(index == 0 && widget.leading == null) return Container(width: 0, height: 0);
         if(index == 0 && widget.leading != null) {
           return widget.leading;
         }
@@ -49,7 +50,7 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
         }
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PostWidget(submission: _submissions[index+1], preview: true),
+          child: PostWidget(submission: _submissions[index-1], preview: true),
         );
       },
       separatorBuilder: (BuildContext context, int index) {

@@ -21,6 +21,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
   List<Rule> _rules;
   Stream<UserContent> _userConent;
   String _sortMethod = 'Hot';
+  String _topTimeFrame = 'Day';
   StreamSubscription<UserContent> _newUserConentsubscription;
   bool _ready = false;
   Subreddit _subreddit;
@@ -29,6 +30,12 @@ class _SubredditScreenState extends State<SubredditScreen> {
   void initState() {
     this.populate();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _newUserConentsubscription.cancel();
+    super.dispose();
   }
 
   void populate() async {
@@ -67,7 +74,18 @@ class _SubredditScreenState extends State<SubredditScreen> {
     });
     switch (this._sortMethod) {
       case 'Hot': this._userConent = _subreddit.hot(); break;
-      case 'Top': this._userConent = _subreddit.top(); break;
+      case 'Top':
+        this._userConent = _subreddit.top(
+          timeFilter: 
+            _topTimeFrame == 'Hour' ? TimeFilter.hour :
+            _topTimeFrame == 'Day' ? TimeFilter.day :
+            _topTimeFrame == 'Week' ? TimeFilter.week :
+            _topTimeFrame == 'Month' ? TimeFilter.month :
+            _topTimeFrame == 'Year' ? TimeFilter.year :
+            _topTimeFrame == 'All time' ? TimeFilter.all :
+            TimeFilter.day
+        );
+        break;
       case 'New': this._userConent = _subreddit.newest(); break;
       case 'Rising': this._userConent = _subreddit.rising(); break;
       case 'Controversial': this._userConent = _subreddit.controversial(); break;
@@ -95,16 +113,17 @@ class _SubredditScreenState extends State<SubredditScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.2,
-                      height: MediaQuery.of(context).size.width * 0.2,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        image: DecorationImage(
-                          image: NetworkImage(_subreddit.iconImage.toString() ?? '')
-                        )
+                    if(_subreddit.iconImage != null)
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        height: MediaQuery.of(context).size.width * 0.2,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(_subreddit.iconImage.toString() ?? '')
+                          )
+                        ),
                       ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(
@@ -180,7 +199,26 @@ class _SubredditScreenState extends State<SubredditScreen> {
                   this._ready = true;
                 });
               },
-            )
+            ),
+            if(_sortMethod == 'Top')
+              DropdownButton(
+                value: _topTimeFrame,
+                items: ['Hour', 'Day', 'Week', 'Month', 'Year', 'All time'].map((String val) {
+                  return DropdownMenuItem(
+                    value: val,
+                    child: Text(val),
+                  );
+                }).toList(),
+                onChanged: (newVal) async {
+                  setState(() {
+                    this._topTimeFrame = newVal;
+                  });
+                  await this.getSubmissions();
+                  setState(() {
+                    this._ready = true;
+                  });
+                },
+              ),
           ],
         ),
         body: RefreshIndicator(
