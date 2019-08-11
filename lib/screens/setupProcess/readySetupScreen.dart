@@ -31,8 +31,8 @@ class ReadySetupScreen extends StatelessWidget {
                   height: MediaQuery.of(context).size.width * 0.5,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(
-                      'https://media.giphy.com/media/CjmvTCZf2U3p09Cn0h/giphy.gif'
+                    child: Image.asset(
+                      'assets/gifs/imReady.webp'
                     )
                   ),
                 ),

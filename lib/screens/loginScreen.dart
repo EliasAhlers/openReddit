@@ -55,12 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 0.6,
                   height: MediaQuery.of(context).size.width * 0.4,
-                  color: Colors.red,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(
-                      'https://media.giphy.com/media/Rkis28kMJd1aE/giphy.gif'
-                    )
+                    child: Image.asset(
+                      'assets/gifs/whyDontShitWork.webp'
+                    ),
                   ),
                 ),
               ),

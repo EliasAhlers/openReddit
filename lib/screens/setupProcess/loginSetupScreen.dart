@@ -31,8 +31,8 @@ class _LoginSetupScreenState extends State<LoginSetupScreen> {
                             height: MediaQuery.of(context).size.width * 0.2,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(5),
-                              child: Image.network(
-                                'https://media.giphy.com/media/26xBwdIuRJiAIqHwA/giphy.gif'
+                              child: Image.asset(
+                                'assets/gifs/greetings.webp'
                               ),
                             ),
                           ),

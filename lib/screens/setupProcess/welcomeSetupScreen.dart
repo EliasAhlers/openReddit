@@ -30,8 +30,8 @@ class WelcomeSetupScreen extends StatelessWidget {
                   height: MediaQuery.of(context).size.width * 0.5,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: Image.network(
-                      'https://media.giphy.com/media/26xBwdIuRJiAIqHwA/giphy.gif'
+                    child: Image.asset(
+                      'assets/gifs/greetings.webp'
                     )
                   ),
                 ),
