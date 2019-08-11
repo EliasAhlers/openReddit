@@ -10,6 +10,7 @@ import 'package:openReddit/screens/postScreen.dart';
 import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
+import 'package:openReddit/widgets/ageWidget.dart';
 
 import 'contentWidget.dart';
 
@@ -44,7 +45,7 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
       borderRadius: BorderRadius.circular(10),
       elevation: 5,
       color: Color.lerp(Colors.black, Colors.grey, 0.35),
-      // type: MaterialType.card,
+      type: MaterialType.card,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
         child: Column(
@@ -59,10 +60,13 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        widget.submission.title,
-                        maxLines: 6,
-                        style: TextStyle(fontSize: 23)
+                      Padding(
+                        padding: const EdgeInsets.all(3),
+                        child: Text(
+                          widget.submission.title,
+                          maxLines: 6,
+                          style: TextStyle(fontSize: 23)
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(4),
@@ -95,6 +99,10 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                                       style: TextStyle(
                                           fontSize: 15, color: Colors.blueAccent),
                                     ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: AgeWidget(date: widget.submission.createdUtc,),
                                   )
                                 ],
                               ),

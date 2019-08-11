@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    if(Uri.parse(_redditor.data['icon_img'].toString()).path != '')
+                    if(_redditor.data['icon_img'].toString() != '')
                       Container(
                         width: 100,
                         height: 100,
@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fit: BoxFit.cover,
                             image: NetworkImage(
                               Uri.parse(
-                                _redditor.data['icon_img'].toString().contains('/avatar/') ?
+                                _redditor.data['icon_img'].toString().contains('/avatars/') ?
                                 'https://www.redditstatic.com' + _redditor.data['icon_img'].toString() :
                                 _redditor.data['icon_img'].toString()
                               ).path,
@@ -112,7 +112,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 Text(
                   'Commentkarma: ' + _redditor.commentKarma.toString()
-                )
+                ),
+                Text(
+                  'Age: ' + (DateTime.now().difference(_redditor.createdUtc).inDays / 365).round().toString()  + ' Years ' +
+                  (DateTime.now().difference(_redditor.createdUtc).inDays % 365).toString()  + ' Days',
+                ),
               ],
             ),
             if(_posts.length == 0)

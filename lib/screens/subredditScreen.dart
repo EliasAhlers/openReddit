@@ -25,6 +25,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
   StreamSubscription<UserContent> _newUserConentsubscription;
   bool _ready = false;
   Subreddit _subreddit;
+  bool _subscribed;
 
   @override
   void initState() {
@@ -52,6 +53,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
         _ready = true;
       });
     }
+    _subscribed = _subreddit.data['user_is_subscriber'];
     this.getRules();
   }
 
@@ -113,7 +115,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    if(_subreddit.iconImage != null)
+                    if(_subreddit.iconImage.toString() != '')
                       Container(
                         width: MediaQuery.of(context).size.width * 0.2,
                         height: MediaQuery.of(context).size.width * 0.2,
@@ -133,6 +135,30 @@ class _SubredditScreenState extends State<SubredditScreen> {
                         ),
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'Subscriber ' + _subreddit.data['subscribers'].toString(),
+                      style: TextStyle(
+                        fontSize: 20
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(_subscribed ? FontAwesomeIcons.bellSlash : FontAwesomeIcons.bell),
+                      color: _subscribed ? Colors.blueAccent : null,
+                      onPressed: () {
+                        if(_subscribed) {
+                          _subscribed = false;
+                          _subreddit.unsubscribe();
+                        } else {
+                          _subscribed = true;
+                          _subreddit.subscribe();
+                        }
+                        setState(() {});
+                      },
+                    )
                   ],
                 ),
                 Text(
@@ -229,29 +255,37 @@ class _SubredditScreenState extends State<SubredditScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: SubmissionsWidget(
               submissions: this._userContentList.cast<Submission>(),
-              leading: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.2,
-                    height: MediaQuery.of(context).size.width * 0.2,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(_subreddit.iconImage.toString() ?? '')
-                      )
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      'r/' + _subreddit.displayName,
-                      style: TextStyle(
-                        fontSize: 30
+              leading: Container(
+                decoration: _subreddit.headerImage != null ? BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(_subreddit.headerImage.toString())
+                  )
+                ) : BoxDecoration(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    if(_subreddit.iconImage.toString() != '')
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        height: MediaQuery.of(context).size.width * 0.2,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(_subreddit.iconImage.toString()),
+                          )
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        'r/' + _subreddit.displayName,
+                        style: TextStyle(
+                          fontSize: 30
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

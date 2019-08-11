@@ -6,6 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:openReddit/services/settingsService.dart';
+import 'package:openReddit/widgets/ageWidget.dart';
 import 'package:openReddit/widgets/expandedSectionWidget.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -44,7 +45,7 @@ class _CommentWidgetState extends State<CommentWidget>
         left: widget.comment.depth != null ? (5* widget.comment.depth ?? 0).toDouble() : 0,
       ),
       child: Material(
-        elevation: (1 * widget.comment.depth + 1 ?? 0).toDouble(),
+        elevation: widget.comment.depth != null ? (1 * widget.comment.depth + 1 ?? 0).toDouble() : 1,
         borderRadius: BorderRadius.circular(5),
         color: Color.lerp(Colors.black, Colors.grey, 0.35),
         child: Padding(
@@ -110,7 +111,16 @@ class _CommentWidgetState extends State<CommentWidget>
                                         ? Colors.blueAccent
                                         : null),
                           ),
-                        )
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: AgeWidget(
+                            date: widget.comment.createdUtc,
+                            textStyle: TextStyle(
+                              fontSize: 12
+                            ),
+                          )
+                        ),
                       ],
                     ),
                   ),

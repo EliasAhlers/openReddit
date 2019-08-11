@@ -70,7 +70,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
     return Material(
       child: ListView.builder(
         itemCount: this._comments.length,
-        shrinkWrap: true,
+        shrinkWrap: widget.noScroll,
         cacheExtent: 3,
         physics: widget.noScroll ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
         itemBuilder: (BuildContext context, int index) {
@@ -78,7 +78,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
             return widget.leading;
           }
           dynamic com = this._comments[index];
-          if(com is Comment) 
+          if(com is Comment)
             return GestureDetector(
               onLongPress: () async {
                 if(_collapsedComments.contains(com.id)) {
