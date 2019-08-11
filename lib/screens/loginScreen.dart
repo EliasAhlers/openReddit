@@ -45,27 +45,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Text(
                   'Oops!',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 55),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Hero(
-                  tag: 'SetupHelloGif',
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.6,
-                    height: MediaQuery.of(context).size.width * 0.6,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.network(
-                        'https://media.giphy.com/media/Rkis28kMJd1aE/giphy.gif'
-                      )
-                    ),
-                  ),
                 )
               ),
+              Expanded(child: Container(),
+                flex: 1,
+              ),
+              Hero(
+                tag: 'SetupHelloGif',
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  height: MediaQuery.of(context).size.width * 0.4,
+                  color: Colors.red,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.network(
+                      'https://media.giphy.com/media/Rkis28kMJd1aE/giphy.gif'
+                    )
+                  ),
+                ),
+              ),
+              Expanded(child: Container(),
+                flex: 1,
+              ),
               Padding(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
                   'Something went wrong while logging in! We asked our robot and it told us: "' + _errorReason + 
                   '" Why don\'t you try again?',
@@ -73,18 +76,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontSize: 25,
                     color: Color.lerp(Colors.white, Colors.grey, 0.25),
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.justify,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 50),
-                child: RaisedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginSetupScreen(); }));
-                  },
-                  child: Text('Try again'),
-                ),
-              )
+              Expanded(child: Container(),
+                flex: 5,
+              ),
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginScreen(setup: widget.setup); }));
+                },
+                child: Text('Try again'),
+              ),
+              Expanded(child: Container(),
+                flex: 1,
+              ),
             ],
           ),
         ),

@@ -40,7 +40,7 @@ class _LoginSetupScreenState extends State<LoginSetupScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          'We need you to login now',
+                          'You need to login now',
                           style: TextStyle(
                             fontSize: 30
                           ),
@@ -53,13 +53,18 @@ class _LoginSetupScreenState extends State<LoginSetupScreen> {
                 Expanded(child: Container(),
                   flex: 1,
                 ),
-                Text(
-                  'You need to authenticate with Reddit to use this app. ' +
-                  'We don\'t store your password in any way. You can alwa' +
-                  'ys withdraw opedReddits acess. Click on the button bel' +
-                  'ow to login.',
-                  style: TextStyle(
-                    fontSize: 25
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'You need to authenticate with Reddit to use this app. ' +
+                    'We don\'t store your password in any way. You can alwa' +
+                    'ys withdraw opedReddits acess. Click on the button bel' +
+                    'ow to login.',
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Color.lerp(Colors.white, Colors.grey, 0.25),
+                    ),
+                    textAlign: TextAlign.justify,
                   ),
                 ),
                 Expanded(child: Container(),

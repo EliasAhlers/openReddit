@@ -39,13 +39,16 @@ class WelcomeSetupScreen extends StatelessWidget {
               Expanded(child: Container(),
                 flex: 1,
               ),
-              Text(
-                'All you have to do is to set a few things up. That won\'t take long, promise! 👍',
-                style: TextStyle(
-                  fontSize: 25,
-                  color: Color.lerp(Colors.white, Colors.grey, 0.25),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'All you have to do is to set a few things up. That won\'t take long, promise! 👍',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Color.lerp(Colors.white, Colors.grey, 0.25),
+                  ),
+                  textAlign: TextAlign.justify,
                 ),
-                textAlign: TextAlign.center,
               ),
               Expanded(child: Container(),
                 flex: 5,

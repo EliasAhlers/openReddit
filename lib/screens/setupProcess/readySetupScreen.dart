@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:openReddit/screens/setupProcess/loginSetupScreen.dart';
 import 'package:openReddit/services/settingsService.dart';
 
 import '../homeScreen.dart';
@@ -18,7 +16,7 @@ class ReadySetupScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Text(
-                  'You are done now',
+                  'You are ready now',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
                   textAlign: TextAlign.left,
                 ),
@@ -42,17 +40,20 @@ class ReadySetupScreen extends StatelessWidget {
               Expanded(child: Container(),
                 flex: 1,
               ),
-              Text(
-                'That\'s all! Didn\'t take that long, right? If there ' +
-                'are any problems, don\'t hesitate to contact us! This' +
-                ' project is open source and created by volunteers in ' +
-                'their freetime, so please keep that in mind!' +
-                '',
-                style: TextStyle(
-                  fontSize: 25,
-                  color: Color.lerp(Colors.white, Colors.grey, 0.25),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  'That\'s all! Didn\'t take that long, right? If there ' +
+                  'are any problems, don\'t hesitate to contact us! This' +
+                  ' project is open source and created by volunteers in ' +
+                  'their freetime, so please keep that in mind!' +
+                  '',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Color.lerp(Colors.white, Colors.grey, 0.25),
+                  ),
+                  textAlign: TextAlign.justify,
                 ),
-                textAlign: TextAlign.center,
               ),
               Expanded(child: Container(),
                 flex: 5,
