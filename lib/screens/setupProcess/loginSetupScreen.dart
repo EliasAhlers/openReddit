@@ -17,11 +17,11 @@ class _LoginSetupScreenState extends State<LoginSetupScreen> {
          child: Center(
            child: Column(
              children: <Widget>[
-               Padding(
-                 padding: const EdgeInsets.only(top: 20),
-                 child: Row(
-                   mainAxisAlignment: MainAxisAlignment.start,
-                   children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Hero(
@@ -46,32 +46,35 @@ class _LoginSetupScreenState extends State<LoginSetupScreen> {
                           ),
                           maxLines: 2,
                         ),
-                      )
-                   ],
-                 ),
-               ),
-               Padding(
-                 padding: const EdgeInsets.only(top: 20),
-                 child: Text(
-                   'You need to authenticate with Reddit to use this app. ' +
-                   'We don\'t store your password in any way. You can alwa' +
-                   'ys withdraw opedReddits acess. Click on the button bel' +
-                   'ow to login.',
-                   style: TextStyle(
-                     fontSize: 25
-                   ),
-                 ),
-               ),
-               Padding(
-                 padding: const EdgeInsets.only(top: 300),
-                 child: RaisedButton(
-                   onPressed: () {
-                     Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginScreen(setup: true); }));
-                   },
-                   elevation: 5,
-                   child: Text('Login to reddit'),
-                 ),
-               )
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(child: Container(),
+                  flex: 1,
+                ),
+                Text(
+                  'You need to authenticate with Reddit to use this app. ' +
+                  'We don\'t store your password in any way. You can alwa' +
+                  'ys withdraw opedReddits acess. Click on the button bel' +
+                  'ow to login.',
+                  style: TextStyle(
+                    fontSize: 25
+                  ),
+                ),
+                Expanded(child: Container(),
+                  flex: 10,
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginScreen(setup: true); }));
+                  },
+                  elevation: 5,
+                  child: Text('Login to reddit'),
+                ),
+                Expanded(child: Container(),
+                  flex: 1,
+                ),
              ],
            ),
          ),

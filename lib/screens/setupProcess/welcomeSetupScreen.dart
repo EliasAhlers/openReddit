@@ -13,52 +13,55 @@ class WelcomeSetupScreen extends StatelessWidget {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 120),
+                padding: const EdgeInsets.only(top: 20),
                 child: Text(
                   'Welcome to openReddit!',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 35),
                   textAlign: TextAlign.center,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Hero(
-                  tag: 'SetupHelloGif',
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    height: MediaQuery.of(context).size.width * 0.5,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(5),
-                      child: Image.network(
-                        'https://media.giphy.com/media/26xBwdIuRJiAIqHwA/giphy.gif'
-                      )
-                    ),
-                  ),
-                )
+              Expanded(child: Container(),
+                flex: 2,
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Text(
-                  'All you have to do is to set a few things up. That won\'t take long, promise! 👍',
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: Color.lerp(Colors.white, Colors.grey, 0.25),
+              Hero(
+                tag: 'SetupHelloGif',
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  height: MediaQuery.of(context).size.width * 0.5,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(5),
+                    child: Image.network(
+                      'https://media.giphy.com/media/26xBwdIuRJiAIqHwA/giphy.gif'
+                    )
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 100),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginSetupScreen(); }));
-                  },
-                  icon: Icon(
-                    FontAwesomeIcons.arrowRight,
-                    size: 40,
-                  ),
+              Expanded(child: Container(),
+                flex: 1,
+              ),
+              Text(
+                'All you have to do is to set a few things up. That won\'t take long, promise! 👍',
+                style: TextStyle(
+                  fontSize: 25,
+                  color: Color.lerp(Colors.white, Colors.grey, 0.25),
                 ),
-              )
+                textAlign: TextAlign.center,
+              ),
+              Expanded(child: Container(),
+                flex: 5,
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginSetupScreen(); }));
+                },
+                icon: Icon(
+                  FontAwesomeIcons.arrowRight,
+                  size: 40,
+                ),
+              ),
+              Expanded(child: Container(),
+                flex: 1,
+              ),
             ],
           ),
         ),

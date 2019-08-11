@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(top: 120),
+                padding: const EdgeInsets.only(top: 20),
                 child: Text(
                   'Oops!',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 55),
@@ -67,8 +67,8 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: const EdgeInsets.only(top: 40),
                 child: Text(
-                  'Something went wrong while logging in! We asked our robot and it told us: ' + _errorReason + 
-                  'Why don\'t you try again?',
+                  'Something went wrong while logging in! We asked our robot and it told us: "' + _errorReason + 
+                  '" Why don\'t you try again?',
                   style: TextStyle(
                     fontSize: 25,
                     color: Color.lerp(Colors.white, Colors.grey, 0.25),
@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 100),
+                padding: const EdgeInsets.only(top: 50),
                 child: RaisedButton(
                   onPressed: () {
                     Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginSetupScreen(); }));
