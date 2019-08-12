@@ -10,6 +10,7 @@ import 'package:openReddit/screens/postScreen.dart';
 import 'package:openReddit/screens/profileScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
+import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/widgets/ageWidget.dart';
 
 import 'contentWidget.dart';
@@ -46,7 +47,6 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
       child: Material(
         borderRadius: BorderRadius.circular(10),
         elevation: 5,
-        // color: Color.lerp(Colors.black, Colors.grey, 0.35),
         type: MaterialType.card,
         child: Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
@@ -152,6 +152,10 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                     ),
                   ),
                   Row(
+                    mainAxisAlignment: 
+                      SettingsService.getKey('post_actions_align') == 'Left' ? MainAxisAlignment.start : 
+                      SettingsService.getKey('post_actions_align') == 'Space between' ? MainAxisAlignment.spaceBetween : 
+                      MainAxisAlignment.end,
                     children: <Widget>[
                       IconButton(
                         icon: Icon(FontAwesomeIcons.arrowCircleUp),

@@ -32,14 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 for(String key in SettingsService.getKeysWithCategory(i))
                   ListTile(
                     title: Text(SettingsService.getKeyDescription(key)),
-                    trailing: Switch(
-                      value: SettingsService.getKey(key),
-                      onChanged: (bool value) {
-                        setState(() {
-                          SettingsService.setKey(key, value, context: context);
-                        });
-                      },
-                    ),
+                    trailing: this._getSettingkeyWidget(key),
                   ),
               ],
             ),
@@ -79,23 +72,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             )
           ),
-          // RaisedButton(
-          //   child: Text('Save'),
-          //   onPressed: () {
-          //     SettingsService.save();
-          //   },
-          // ),
-          // RaisedButton(
-          //   child: Text('Load'),
-          //   onPressed: () async {
-          //     await SettingsService.load();
-          //     setState(() {
-          //     });
-          //   },
-          // ),
         ],
       ),
     );
+  }
+
+  Widget _getSettingkeyWidget(String key) {
+    switch (SettingsService.getKeyType(key)) {
+      case bool:
+        return Switch(
+            value: SettingsService.getKey(key),
+            onChanged: (bool value) {
+              setState(() {
+                SettingsService.setKey(key, value);
+              });
+            },
+          );
+        break;
+      case Function:
+        return RaisedButton(
+          child: Text('Activate'),
+          onPressed: () {
+            SettingsService.toggleKeyAction(key, context: context);
+          },
+        );
+        break;
+      case List:
+        return DropdownButton(
+          items:  SettingsService.getKeyOptions(key).map((option) {
+              return DropdownMenuItem(
+                value: option,
+                child: Text(option.toString()),
+              );
+            }).toList(),
+            value: SettingsService.getKey(key),
+            onChanged: (newVal) {
+              setState(() {
+                SettingsService.setKey(key, newVal);
+              });
+            },
+        );
+        break;
+      default:
+        return Text('This should\'t be here...');
+    }
   }
 
 }

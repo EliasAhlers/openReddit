@@ -26,12 +26,13 @@ class SettingsService {
       'setupDone': SettingsKey(type: bool, value: false, hidden: true, description: '', category: 999999),
       'redditCredentials': SettingsKey(type: String, value: '', hidden: true, description: '', category: 999999),
       'redditUserAgent': SettingsKey(type: String, value: '', hidden: true, description: '', category: 999999),
+      'post_actions_align': SettingsKey(type: List, options: ['Left', 'Space between', 'Right'], value: 'Space between', hidden: false, description: 'Post actions align', category: 0),
       'content_gif_preload': SettingsKey(type: bool, value: true, hidden: false, description: 'Preload gifs', category: 1),
       'content_gif_loop': SettingsKey(type: bool, value: true, hidden: false, description: 'Loop gifs', category: 1),
       'content_videos_preload': SettingsKey(type: bool, value: true, hidden: false, description: 'Preload videos', category: 1),
       'content_video_loop': SettingsKey(type: bool, value: true, hidden: false, description: 'Loop videos', category: 1),
       'content_youtube_autoplay': SettingsKey(type: bool, value: true, hidden: false, description: 'Autoplay youtub videos', category: 1),
-      'comment_actions_align_right': SettingsKey(type: bool, value: true, hidden: false, description: 'Right align forcommentactions', category: 2),
+      'comment_actions_align': SettingsKey(type: List, options: ['Left', 'Space between', 'Right'], value: 'Space between', hidden: false, description: 'Momment actions align', category: 2),
       'theme_set_light': SettingsKey(type: Function, value: (BuildContext context) { DynamicTheme.of(context).setBrightness(Brightness.light); }, hidden: false, description: 'Light mode', category: 3),
       'theme_set_dark': SettingsKey(type: Function, value: (BuildContext context) { DynamicTheme.of(context).setBrightness(Brightness.dark); }, hidden: false, description: 'Dark mode', category: 3),
   };
@@ -80,15 +81,39 @@ class SettingsService {
     return _keys[key].description;
   }
 
-  static void setKey(String key, dynamic value, { BuildContext context }) {
+  static List<dynamic> getKeyOptions(String key) {
     if(_keys[key] == null) {
       print('Error, did not find key '+ key);
       throw Error();
     }
-    _keys[key].setValue(value, context: context);
+    if(_keys[key].options == null) {
+      print('Error, key did not have options '+ key);
+      throw Error();
+    }
+    return _keys[key].options;
   }
 
-  static save() {
+  static Type getKeyType(String key) {
+    if(_keys[key] == null) {
+      print('Error, did not find key '+ key);
+      throw Error();
+    }
+    return _keys[key].type;
+  }
+
+  static void setKey(String key, dynamic value) {
+    if(_keys[key] == null) {
+      print('Error, did not find key '+ key);
+      throw Error();
+    }
+    _keys[key].setValue(value);
+  }
+
+  static void toggleKeyAction(String key, { BuildContext context }) {
+    _keys[key].toggleActon(context: context);
+  }
+
+  static void save() {
     StoreRef store = StoreRef.main();
     _keys.forEach((key, value) async {
       if(!(value.value is Function)) {

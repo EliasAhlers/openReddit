@@ -157,7 +157,10 @@ class _CommentWidgetState extends State<CommentWidget>
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 5),
                                 child: Row(
-                                mainAxisAlignment: SettingsService.getKey('comment_actions_align_right') ? MainAxisAlignment.end : MainAxisAlignment.start,                            
+                                mainAxisAlignment: 
+                                  SettingsService.getKey('post_actions_align') == 'Left' ? MainAxisAlignment.start : 
+                                  SettingsService.getKey('post_actions_align') == 'Space between' ? MainAxisAlignment.spaceBetween : 
+                                  MainAxisAlignment.end,      
                                 children: <Widget>[
                                   IconButton(
                                     icon: Icon(FontAwesomeIcons.arrowCircleUp),
