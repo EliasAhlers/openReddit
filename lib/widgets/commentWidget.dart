@@ -54,9 +54,16 @@ class _CommentWidgetState extends State<CommentWidget>
           child: Container(
             decoration: BoxDecoration(
               border: widget.comment.depth != null ?
-                widget.comment.depth > 0  ? Border(
+                widget.comment.depth > 0 && !SettingsService.getKey('comment_bars_enable') ? Border(
                   left: BorderSide(
-                    color: Colors.grey,
+                    color:
+                      SettingsService.getKey('comment_bars_color') == 'White' ? Colors.white :
+                      SettingsService.getKey('comment_bars_color') == 'Blue' ? Colors.blue :
+                      SettingsService.getKey('comment_bars_color') == 'Green' ? Colors.green :
+                      SettingsService.getKey('comment_bars_color') == 'Red' ? Colors.red :
+                      SettingsService.getKey('comment_bars_color') == 'Brown' ? Colors.brown :
+                      SettingsService.getKey('comment_bars_color') == 'Grey' ? Colors.grey :
+                      Colors.grey,
                     width: 2,
                   ),
               ) : Border() : Border(),

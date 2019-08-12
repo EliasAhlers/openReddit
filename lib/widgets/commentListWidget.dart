@@ -1,6 +1,7 @@
 
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:openReddit/services/settingsService.dart';
 import 'package:vibration/vibration.dart';
 
 import 'commentWidget.dart';
@@ -88,14 +89,16 @@ class _CommentListWidgetState extends State<CommentListWidget> {
                   }).forEach((commentId) {
                     _hiddenComments.remove(commentId);
                   });
-                  Vibration.vibrate(duration: 100);
+                  if(SettingsService.getKey('comment_hide_vibrate'))
+                    Vibration.vibrate(duration: 100);
                   setState(() {});
                 } else {
                   _collapsedComments.add(com.id);
                   _hiddenComments.addAll(this._processComment(com).map((mapComment) {
                     return mapComment.id;
                   }));
-                  Vibration.vibrate(duration: 100);
+                  if(SettingsService.getKey('comment_hide_vibrate'))
+                    Vibration.vibrate(duration: 100);
                   setState(() {});
                 }
               },

@@ -32,7 +32,10 @@ class SettingsService {
       'content_videos_preload': SettingsKey(type: bool, value: true, hidden: false, description: 'Preload videos', category: 1),
       'content_video_loop': SettingsKey(type: bool, value: true, hidden: false, description: 'Loop videos', category: 1),
       'content_youtube_autoplay': SettingsKey(type: bool, value: true, hidden: false, description: 'Autoplay youtub videos', category: 1),
-      'comment_actions_align': SettingsKey(type: List, options: ['Left', 'Space between', 'Right'], value: 'Space between', hidden: false, description: 'Momment actions align', category: 2),
+      'comment_actions_align': SettingsKey(type: List, options: ['Left', 'Space between', 'Right'], value: 'Right', hidden: false, description: 'Momment actions align', category: 2),
+      'comment_bars_enable': SettingsKey(type: bool, value: true, hidden: false, description: 'Enable comment bars', category: 2),
+      'comment_hide_vibrate': SettingsKey(type: bool, value: true, hidden: false, description: 'Enable vibration on hiding', category: 2),
+      'comment_bars_color': SettingsKey(type: List, options: ['Grey', 'White', 'Blue', 'Green', 'Red', 'Brown'], value: 'Grey', hidden: false, description: 'Color of comment bars', category: 2),
       'theme_set_light': SettingsKey(type: Function, value: (BuildContext context) { DynamicTheme.of(context).setBrightness(Brightness.light); }, hidden: false, description: 'Light mode', category: 3),
       'theme_set_dark': SettingsKey(type: Function, value: (BuildContext context) { DynamicTheme.of(context).setBrightness(Brightness.dark); }, hidden: false, description: 'Dark mode', category: 3),
   };
