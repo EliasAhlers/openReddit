@@ -54,7 +54,7 @@ class _CommentWidgetState extends State<CommentWidget>
           child: Container(
             decoration: BoxDecoration(
               border: widget.comment.depth != null ?
-                widget.comment.depth > 0 && !SettingsService.getKey('comment_bars_enable') ? Border(
+                widget.comment.depth > 0 && SettingsService.getKey('comment_bars_enable') ? Border(
                   left: BorderSide(
                     color:
                       SettingsService.getKey('comment_bars_color') == 'White' ? Colors.white :
@@ -165,8 +165,8 @@ class _CommentWidgetState extends State<CommentWidget>
                                 padding: const EdgeInsets.symmetric(vertical: 5),
                                 child: Row(
                                 mainAxisAlignment: 
-                                  SettingsService.getKey('post_actions_align') == 'Left' ? MainAxisAlignment.start : 
-                                  SettingsService.getKey('post_actions_align') == 'Space between' ? MainAxisAlignment.spaceBetween : 
+                                  SettingsService.getKey('comment_actions_align') == 'Left' ? MainAxisAlignment.start : 
+                                  SettingsService.getKey('comment_actions_align') == 'Space between' ? MainAxisAlignment.spaceBetween : 
                                   MainAxisAlignment.end,      
                                 children: <Widget>[
                                   IconButton(
