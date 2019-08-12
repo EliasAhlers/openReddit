@@ -25,9 +25,10 @@ class _PostScreenState extends State<PostScreen> {
   Future<void> getComments() async {
     Completer c = new Completer();
     widget.submission.refreshComments().then((val) {
-      setState(() {
-        this._comments = widget.submission.comments.comments;
-      });
+      if(this.mounted)
+        setState(() {
+          this._comments = widget.submission.comments.comments;
+        });
       c.complete();
     });
     return c.future;
@@ -43,12 +44,12 @@ class _PostScreenState extends State<PostScreen> {
         onRefresh: () {
           return this.getComments();
         },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            children: <Widget>[
-              this._comments != null
-                ? Expanded(
+        child: Column(
+          children: <Widget>[
+            this._comments != null
+              ? Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: CommentListWidget(
                     comments: this._comments,
                     highlightUserName: widget.submission.author,
@@ -58,10 +59,10 @@ class _PostScreenState extends State<PostScreen> {
                         Divider(),
                       ],
                     )
+                ),
                   ))
-                : LinearProgressIndicator(),
-            ],
-          ),
+              : LinearProgressIndicator(),
+          ],
         ),
       ),
     );

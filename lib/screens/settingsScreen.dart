@@ -36,7 +36,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       value: SettingsService.getKey(key),
                       onChanged: (bool value) {
                         setState(() {
-                          SettingsService.setKey(key, value);
+                          SettingsService.setKey(key, value, context: context);
                         });
                       },
                     ),

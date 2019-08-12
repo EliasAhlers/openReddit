@@ -89,11 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           image: DecorationImage(
                             fit: BoxFit.cover,
                             image: NetworkImage(
-                              Uri.parse(
-                                _redditor.data['icon_img'].toString().contains('/avatars/') ?
-                                'https://www.redditstatic.com' + _redditor.data['icon_img'].toString() :
-                                _redditor.data['icon_img'].toString()
-                              ).path,
+                              _redditor.data['icon_img'].toString().contains('/avatars/') && !_redditor.data['icon_img'].toString().contains('www.redditstatic.com') ?
+                              'https://www.redditstatic.com' + _redditor.data['icon_img'].toString() :
+                              _redditor.data['icon_img'].toString(),
                             ),
                           )
                         ),

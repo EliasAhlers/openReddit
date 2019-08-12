@@ -1,8 +1,7 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/loginScreen.dart';
 import 'package:openReddit/services/settingsService.dart';
-
-// void main() => runApp(MyApp());
 
 main() {
   SettingsService.init();
@@ -12,15 +11,21 @@ main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'openReddit',
-      theme: ThemeData(
-        brightness: Brightness.dark,
+    return DynamicTheme(
+      defaultBrightness: Brightness.dark,
+      data: (brightness) => new ThemeData(
         appBarTheme: AppBarTheme(
           color: Colors.black87
-        )
+        ),
+        brightness: brightness,
       ),
-      home: LoginScreen(),
+      themedWidgetBuilder: (context, theme) {
+        return new MaterialApp(
+          title: 'openReddit',
+          theme: theme,
+          home: LoginScreen()
+        );
+      }
     );
   }
 }

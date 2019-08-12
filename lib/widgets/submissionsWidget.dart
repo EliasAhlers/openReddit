@@ -48,10 +48,7 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
             precacheImage(NetworkImage(_submissions[index+5].preview.elementAt(0).source.url.toString()), context);
           }
         }
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: PostWidget(submission: _submissions[index-1], preview: true),
-        );
+        return PostWidget(submission: _submissions[index-1], preview: true);
       },
       separatorBuilder: (BuildContext context, int index) {
         return Divider();

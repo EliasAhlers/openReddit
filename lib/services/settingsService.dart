@@ -3,13 +3,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:debug_mode/debug_mode.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
 class SettingsService {
 
-  static List<String> categorys = ['Post settings', 'Content settings', 'Comment settings'];
+  static List<String> categorys = ['Posts', 'Contents', 'Comment', 'Theme'];
   static Function onReady;
   static bool ready = false;
   static Map<String, Map<String, dynamic>> _keys = {};
@@ -29,6 +31,8 @@ class SettingsService {
       'content_video_loop': { 'value': true, 'description': 'Loop videos', 'category': 1 },
       'content_youtube_autoplay': { 'value': true, 'description': 'Autoplay youtube videos', 'category': 1 },
       'comment_actions_align_right': { 'value': true, 'description': 'Right align for comment actions', 'category': 2 },
+      'theme_set_light': { 'value': (BuildContext context) { DynamicTheme.of(context).setBrightness(Brightness.light); }, 'description': 'Light theme', 'category': 3 },
+      'theme_set_dark': { 'value': (BuildContext context) { DynamicTheme.of(context).setBrightness(Brightness.dark); }, 'description': 'Dark theme', 'category': 3 },
     };
     if(DebugMode.isInDebugMode) {
       categorys.add('Debug');
@@ -76,13 +80,13 @@ class SettingsService {
     return _keys[key]['description'];
   }
 
-  static void setKey(String key, dynamic value) {
+  static void setKey(String key, dynamic value, { BuildContext context }) {
     if(_keys[key] == null) {
       print('Error, did not find key '+ key);
       throw Error();
     }
     if(_keys[key]['value'] is Function) {
-      _keys[key]['value']();
+      _keys[key]['value'](context);
       return;
     }
     _keys[key]['value'] = value;
