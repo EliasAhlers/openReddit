@@ -3,6 +3,7 @@ import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/loginScreen.dart';
 import 'package:openReddit/screens/profileScreen.dart';
+import 'package:openReddit/screens/searchScreen.dart';
 import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/services/settingsService.dart';
@@ -132,6 +133,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
                 Navigator.pop(context);
                 this.loadPopular();
+              },
+            ),
+            ListTile(
+              title: Text('Search'),              
+              onTap: () {
+                Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SearchScreen(); }));
               },
             ),
             ListTile(

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_provider/video_provider.dart';
@@ -65,25 +66,33 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 
   void _prepareGifVideo() async {
-    List<Video> checkedUris = await CheckedVideoProvider.fromUri(
+    List<Video> checkedUris = VideoProvider.fromUri(
     Uri.parse(widget.submission.url.toString()),
-    ).getVideos().toList();
-    _controller = VideoPlayerController.network(
-      checkedUris[0].uri.toString(),
-    );
+    ).getVideos();
 
-    _chewieController = ChewieController(
-      videoPlayerController: _controller,
-      autoPlay: false,
-      aspectRatio: _controller.value.aspectRatio,
-      allowFullScreen: false,
-      looping: SettingsService.getKey('content_gif_loop'),
-      autoInitialize: SettingsService.getKey('content_gif_preload'),
-      
-    );
-    setState(() {
-      this._gifProviderReady = true;
-    });
+    // List<Video> checkedUris = await  CheckedVideoProvider.fromUri(
+    // Uri.parse(widget.submission.url.toString()),
+    // ).getVideos().toList();
+
+    if((await head(checkedUris[0].uri)).statusCode == 200 ) {
+      _controller = VideoPlayerController.network(
+        checkedUris[0].uri.toString(),
+      );
+
+      _chewieController = ChewieController(
+        videoPlayerController: _controller,
+        autoPlay: false,
+        aspectRatio: _controller.value.aspectRatio,
+        allowFullScreen: false,
+        looping: SettingsService.getKey('content_gif_loop'),
+        autoInitialize: SettingsService.getKey('content_gif_preload'),
+        
+      );
+      setState(() {
+        this._gifProviderReady = true;
+      });
+    }
+
   }
 
   void _prepareVideo() {

@@ -131,7 +131,7 @@ class _SubredditScreenState extends State<SubredditScreen> {
                       child: Text(
                         'r/' + _subreddit.displayName,
                         style: TextStyle(
-                          fontSize: 30
+                          fontSize: 25
                         ),
                       ),
                     ),
@@ -256,11 +256,11 @@ class _SubredditScreenState extends State<SubredditScreen> {
             child: SubmissionsWidget(
               submissions: this._userContentList.cast<Submission>(),
               leading: Container(
-                decoration: _subreddit.headerImage != null ? BoxDecoration(
-                  image: DecorationImage(
-                    image: NetworkImage(_subreddit.headerImage.toString())
-                  )
-                ) : BoxDecoration(),
+                // decoration: _subreddit.headerImage != null ? BoxDecoration(
+                //   image: DecorationImage(
+                //     image: NetworkImage(_subreddit.headerImage.toString())
+                //   )
+                // ) : BoxDecoration(),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
