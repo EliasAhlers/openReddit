@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:openReddit/services/infoService.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_provider/video_provider.dart';
@@ -84,8 +86,8 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
         autoPlay: false,
         aspectRatio: _controller.value.aspectRatio,
         allowFullScreen: false,
-        looping: SettingsService.getKey('content_gif_loop'),
-        autoInitialize: SettingsService.getKey('content_gif_preload'),
+        looping: SettingsService.getKey('content_gifs_loop'),
+        autoInitialize: SettingsService.getKey('content_gifs_preload'),
         
       );
       setState(() {
@@ -105,7 +107,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       autoPlay: false,
       allowFullScreen: false,
       aspectRatio: widget.submission.data['media']['reddit_video']['width'] / widget.submission.data['media']['reddit_video']['height'],
-      looping: SettingsService.getKey('content_video_loop'),
+      looping: SettingsService.getKey('content_videos_loop'),
       autoInitialize: SettingsService.getKey('content_videos_preload'),
     );
     setState(() {
@@ -125,9 +127,23 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getGifProvider() {
+    if(
+      SettingsService.getKey('content_gifs_load') == 'Always' ||
+      (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
+    ) {
     return this._gifProviderReady ? Chewie(
       controller: _chewieController,
     ) : LinearProgressIndicator();
+    } else {
+      return Container(
+        child: Center(
+          child: 
+            SettingsService.getKey('content_gifs_load') == 'WiFi' ?
+            Text('You only enabled gifs while beeing connected to WiFi') :
+            Text('You disabled gifs in the settings'),
+        ),
+      );
+    }   
   }
 
   Widget _getImage() {
@@ -135,34 +151,66 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
         ? widget.submission.preview.elementAt(0).source.url.toString()
         : '';
 
-    return GestureDetector(
-      onTap: !this._showSpoiler ? () {
-        setState(() {
-          this._showSpoiler = true;
-        });
-      } : null,
-      onLongPress: () {
-        if(this._showSpoiler)
+    if(
+      SettingsService.getKey('content_images_load') == 'Always' ||
+      (SettingsService.getKey('content_images_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
+    ) {
+      return GestureDetector(
+        onTap: !this._showSpoiler ? () {
           setState(() {
-            this._showSpoiler = false;
+            this._showSpoiler = true;
           });
-      },
-      child: CachedNetworkImage(
-        imageUrl: imageUrl,
-        color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
-        alignment: Alignment.center,
-        fit: BoxFit.cover,
-      ),
-    );
+        } : null,
+        onLongPress: () {
+          if(this._showSpoiler)
+            setState(() {
+              this._showSpoiler = false;
+            });
+        },
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
+          alignment: Alignment.center,
+          fit: BoxFit.cover,
+        ),
+      );
+    } else {
+      return Container(
+        child: Center(
+          child: 
+            SettingsService.getKey('content_images_load') == 'WiFi' ?
+            Text('You only enabled images while beeing connected to WiFi') :
+            Text('You disabled pictures in the settings'),
+        ),
+      );
+    }   
   }
 
   Widget _getGif() {
-    return Image.network(
-      widget.submission.url.toString().replaceAll('.gifv', '.gifv'),
-    );
+    if(
+      SettingsService.getKey('content_gifs_load') == 'Always' ||
+      (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
+    ) {
+      return Image.network(
+        widget.submission.url.toString().replaceAll('.gifv', '.gifv'),
+      );
+    } else {
+      return Container(
+        child: Center(
+          child: 
+            SettingsService.getKey('content_gifs_load') == 'WiFi' ?
+            Text('You only enabled gifs while beeing connected to WiFi') :
+            Text('You disabled gifs in the settings'),
+        ),
+      );
+    }  
   }
 
   Widget _getYouTube() {
+    if(
+      SettingsService.getKey('content_youtube_load') == 'Always' ||
+      (SettingsService.getKey('content_youtube_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
+    ) {
     return this._loadYouTube ? YoutubePlayer(
       context: context,
       videoId: this._getYouTubeId(widget.submission.url.toString()),
@@ -190,6 +238,16 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
         Text('Tap to load')
       ],
     );
+    } else {
+      return Container(
+        child: Center(
+          child: 
+            SettingsService.getKey('content_youtube_load') == 'WiFi' ?
+            Text('You only enabled Youtube videos while beeing connected to WiFi') :
+            Text('You disabled Youtube videos in the settings'),
+        ),
+      );
+    }
   }
 
   String _getYouTubeId(String link) {
@@ -199,9 +257,23 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getVideo() {
+    if(
+      SettingsService.getKey('content_videos_load') == 'Always' ||
+      (SettingsService.getKey('content_videos_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
+    ) {
     return this._videoReady ? Chewie(
       controller: _chewieController)
     : LinearProgressIndicator();
+    } else {
+      return Container(
+        child: Center(
+          child: 
+            SettingsService.getKey('content_videos_load') == 'WiFi' ?
+            Text('You only enabled videos while beeing connected to WiFi') :
+            Text('You disabled videos in the settings'),
+        ),
+      );
+    }
   }
   
   @override

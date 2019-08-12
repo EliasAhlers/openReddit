@@ -1,10 +1,12 @@
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/loginScreen.dart';
+import 'package:openReddit/services/infoService.dart';
 import 'package:openReddit/services/settingsService.dart';
 
 main() {
   SettingsService.init();
+  InfoService.init();
   runApp(MyApp());
 } 
 
