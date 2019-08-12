@@ -153,7 +153,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   if(this._subscribedSubreddits[index] != null) {
                     if(this._subscribedSubreddits[index].iconImage != null && this._subscribedSubreddits[index].iconImage.toString() != '')  {
-                      print(_subscribedSubreddits[index].iconImage.toString());
                       return ListTile(
                         title: Text(this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
                         leading: Container(

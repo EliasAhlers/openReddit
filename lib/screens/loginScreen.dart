@@ -2,7 +2,6 @@ import 'package:draw/draw.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/screens/homeScreen.dart';
-import 'package:openReddit/screens/setupProcess/loginSetupScreen.dart';
 import 'package:openReddit/screens/setupProcess/readySetupScreen.dart';
 import 'package:openReddit/screens/setupProcess/welcomeSetupScreen.dart';
 import 'package:openReddit/services/redditService.dart';
