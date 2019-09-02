@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:draw/draw.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:openReddit/services/infoService.dart';
 import 'package:openReddit/services/settingsService.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_provider/video_provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -163,14 +163,18 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
               this._showSpoiler = false;
             });
         },
-        child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
-          alignment: Alignment.center,
-          fit: BoxFit.cover,
-          placeholder: (BuildContext context, String _) {
-            return LinearProgressIndicator();
-          },
+        // child: CachedNetworkImage(
+        //   imageUrl: imageUrl,
+        //   color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
+        //   alignment: Alignment.center,
+        //   fit: BoxFit.cover,
+        //   placeholder: (BuildContext context, String _) {
+        //     return LinearProgressIndicator();
+        //   },
+        // ),
+        child: FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: imageUrl,
         ),
       );
     } else {

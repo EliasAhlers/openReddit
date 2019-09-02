@@ -44,6 +44,7 @@ dependencies:
   debug_mode: ^0.1.1
   dynamic_theme: ^1.0.1
   connectivity: ^0.4.3+7
+  transparent_image: ^1.0.0
 
 dev_dependencies:
   flutter_test:

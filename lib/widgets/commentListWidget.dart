@@ -119,7 +119,10 @@ class _CommentListWidgetState extends State<CommentListWidget> {
               ) : Container(width: 0, height: 0),
             ); 
           else
-          return !_hiddenComments.contains(com.id) ? MoreCommentsWidget(moreComments: com) : Container(width: 0, height: 0);
+          return !_hiddenComments.contains(com.id) ? MoreCommentsWidget(
+            moreComments: com,
+            depth: _comments[index-1] != null ? _comments[index-1].depth : 0,
+          ) : Container(width: 0, height: 0);
         },
       ),
     );

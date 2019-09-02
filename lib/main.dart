@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
           color: Colors.black87
         ),
         brightness: brightness,
+        canvasColor: brightness == Brightness.dark ? Color.lerp(Colors.black, Colors.white, 0.1) : Colors.white,
       ),
       themedWidgetBuilder: (context, theme) {
         return new MaterialApp(

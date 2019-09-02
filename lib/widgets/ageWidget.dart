@@ -25,18 +25,18 @@ class _DateWidgetState extends State<DateWidget> {
     Duration diff = DateTime.now().difference(widget.date);
 
     if(diff.inHours > 8766) {
-      if((diff.inDays / 365).round() == 1) return 'One Year';
+      if((diff.inDays / 365).round() == 1) return 'One year';
       return (diff.inDays / 365).round().toString() + ' years';
     }
     if(diff.inHours > 24) {
-      if(diff.inDays == 1) return 'One Day';
+      if(diff.inDays == 1) return 'One day';
       return diff.inDays.toString() + ' days';
     }
     if(diff.inMinutes > 60) {
-      if(diff.inHours == 1) return 'One Hour';
+      if(diff.inHours == 1) return 'One hour';
       return diff.inHours.toString() + ' hours';
     }
-    if(diff.inMinutes == 1) return 'One Minute';
+    if(diff.inMinutes == 1) return 'One minute';
     return diff.inMinutes.toString() + ' minutes';
   }
 
