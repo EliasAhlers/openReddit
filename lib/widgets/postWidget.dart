@@ -20,8 +20,9 @@ enum postExtraActions { openProfile, report }
 class PostWidget extends StatefulWidget {
   final Submission submission;
   final bool preview;
+  final Function onReply;
 
-  PostWidget({Key key, this.submission, this.preview = true}) : super(key: key);
+  PostWidget({Key key, this.submission, this.preview = true, this.onReply}) : super(key: key);
 
   _PostWidgetState createState() => _PostWidgetState();
 }
@@ -50,7 +51,7 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
               GestureDetector(
                 onTap: () {
                   if(widget.preview)
-                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission,); }));
+                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission); }));
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,10 +199,48 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                     },
                   ),
                   if(widget.submission.url.toString() != '')
+                    IconButton(
+                      icon: Icon(FontAwesomeIcons.globe),
+                      onPressed: () async {
+                        await FlutterWebBrowser.openWebPage(url: widget.submission.url.toString()); // TODO: unify with login browser
+                      },                      
+                    ),
                   IconButton(
                     icon: Icon(FontAwesomeIcons.bookOpen),
                     onPressed: () async {
-                      await FlutterWebBrowser.openWebPage(url: widget.submission.url.toString()); // TODO: unify with login browser
+                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission); }));
+                    },                      
+                  ),
+                  IconButton(
+                    icon: Icon(FontAwesomeIcons.reply),
+                    onPressed: () async {
+                      String reply = '';
+                      bool loading = false;
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext dialogContext) {
+                          return Material(
+                            child: Column(
+                              children: <Widget>[
+                                Text('Reply:'),
+                                TextField(
+                                  onChanged: (String newVal) { reply = newVal; },
+                                ),
+                                !loading ? RaisedButton(
+                                  child: Text('Reply'),
+                                  onPressed: () async {
+                                    loading = true;
+                                    Comment replyComment = await widget.submission.reply(reply);
+                                    await Future.delayed(Duration(seconds: 5));
+                                    if(widget.onReply != null) widget.onReply(replyComment);
+                                    Navigator.pop(dialogContext);
+                                  },
+                                ) : LinearProgressIndicator(),
+                              ],
+                            ),
+                          );
+                        }
+                      );
                     },                      
                   ),
                   PopupMenuButton<postExtraActions>(

@@ -18,11 +18,11 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   void initState() {
-    this.getComments();
+    this._getComments();
     super.initState();
   }
 
-  Future<void> getComments() async {
+  Future<void> _getComments() async {
     Completer c = new Completer();
     widget.submission.refreshComments().then((val) {
       if(this.mounted)
@@ -42,7 +42,7 @@ class _PostScreenState extends State<PostScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () {
-          return this.getComments();
+          return this._getComments();
         },
         child: Column(
           children: <Widget>[
@@ -55,7 +55,13 @@ class _PostScreenState extends State<PostScreen> {
                       highlightUserName: widget.submission.author,
                       leading: Column(
                         children: <Widget>[
-                          PostWidget(submission: widget.submission, preview: false),
+                          PostWidget(
+                            submission: widget.submission,
+                            preview: false,
+                            onReply: (Comment replyComment) async {
+                              Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission); }));
+                            },
+                          ),
                           Divider(),
                         ],
                       )

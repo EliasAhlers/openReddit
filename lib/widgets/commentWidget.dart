@@ -13,8 +13,9 @@ class CommentWidget extends StatefulWidget {
   final Comment comment;
   final bool collapsed;
   final bool highlightAuthor;
+  final Function onReply;
 
-  CommentWidget({Key key, this.comment, this.collapsed = false, this.highlightAuthor = false})
+  CommentWidget({Key key, this.comment, this.collapsed = false, this.highlightAuthor = false, this.onReply})
       : super(key: key);
 
   _CommentWidgetState createState() => _CommentWidgetState();
@@ -206,6 +207,35 @@ class _CommentWidgetState extends State<CommentWidget>
                                   else
                                     widget.comment.unsave();
                                 });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(FontAwesomeIcons.reply),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext dialogContext) {
+                                    String reply = '';
+                                    return Material(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text('Reply:'),
+                                          TextField(
+                                            onChanged: (String newVal) { reply = newVal; },
+                                          ),
+                                          RaisedButton(
+                                            child: Text('Reply'),
+                                            onPressed: () async {
+                                              Comment replyComment = await widget.comment.reply(reply);
+                                              if(widget.onReply != null) widget.onReply(replyComment);
+                                              Navigator.pop(dialogContext);
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                );
                               },
                             ),
                           ],

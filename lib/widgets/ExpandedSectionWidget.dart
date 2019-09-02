@@ -53,9 +53,10 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
     }
     else {
       Future.delayed(Duration(milliseconds: widget.duration + 5)).then((_) {
-        setState(() {
-          renderContent = false;
-        });
+        if(mounted)
+          setState(() {
+            renderContent = false;
+          });
       });
       _expandController.reverse();
     }
