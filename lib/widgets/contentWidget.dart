@@ -68,17 +68,13 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 
   void _prepareGifVideo() async {
-    List<Video> checkedUris = VideoProvider.fromUri(
+    List<Video> videoUris = VideoProvider.fromUri(
     Uri.parse(widget.submission.url.toString()),
     ).getVideos();
 
-    // List<Video> checkedUris = await  CheckedVideoProvider.fromUri(
-    // Uri.parse(widget.submission.url.toString()),
-    // ).getVideos().toList();
-
-    if((await head(checkedUris[0].uri)).statusCode == 200 ) {
+    if((await head(videoUris[0].uri)).statusCode == 200 ) {
       _controller = VideoPlayerController.network(
-        checkedUris[0].uri.toString(),
+        videoUris[0].uri.toString(),
       );
 
       _chewieController = ChewieController(
@@ -172,6 +168,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
           color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
           alignment: Alignment.center,
           fit: BoxFit.cover,
+          placeholder: (BuildContext context, String _) {
+            return LinearProgressIndicator();
+          },
         ),
       );
     } else {

@@ -1,16 +1,17 @@
 
 import 'package:flutter/material.dart';
 
-class AgeWidget extends StatefulWidget {
+class DateWidget extends StatefulWidget {
   final DateTime date;
   final TextStyle textStyle;
+  final String suffix;
 
-  AgeWidget({Key key, @required this.date, this.textStyle}) : super(key: key);
+  DateWidget({Key key, @required this.date, this.textStyle, this.suffix = ''}) : super(key: key);
 
-  _AgeWidgetState createState() => _AgeWidgetState();
+  _DateWidgetState createState() => _DateWidgetState();
 }
 
-class _AgeWidgetState extends State<AgeWidget> {
+class _DateWidgetState extends State<DateWidget> {
   String _ageString = '';
 
   @override
@@ -25,24 +26,24 @@ class _AgeWidgetState extends State<AgeWidget> {
 
     if(diff.inHours > 8766) {
       if((diff.inDays / 365).round() == 1) return 'One Year';
-      return (diff.inDays / 365).round().toString() + ' Years';
+      return (diff.inDays / 365).round().toString() + ' years';
     }
     if(diff.inHours > 24) {
       if(diff.inDays == 1) return 'One Day';
-      return diff.inDays.toString() + ' Days';
+      return diff.inDays.toString() + ' days';
     }
     if(diff.inMinutes > 60) {
       if(diff.inHours == 1) return 'One Hour';
-      return diff.inHours.toString() + ' Hours';
+      return diff.inHours.toString() + ' hours';
     }
     if(diff.inMinutes == 1) return 'One Minute';
-    return diff.inMinutes.toString() + ' Minutes';
+    return diff.inMinutes.toString() + ' minutes';
   }
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      _ageString,
+      _ageString + widget.suffix,
       style: widget.textStyle ?? TextStyle()
     );
   }

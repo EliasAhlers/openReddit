@@ -42,230 +42,221 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Material(
-        borderRadius: BorderRadius.circular(10),
-        elevation: 5,
-        type: MaterialType.card,
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: Column(
+    return Material(
+      child: Column(
+        children: <Widget>[
+          Column(
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      if(widget.preview)
-                      Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission,); }));
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(3),
-                          child: Text(
-                            widget.submission.title,
-                            maxLines: 6,
-                            style: TextStyle(fontSize: 23)
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: Row(
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTap: () async {
-                                        Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(futureSubreddit: widget.submission.subreddit.populate()); }));
-                                      },
-                                      child: Text(
-                                        'r/' + widget.submission.subreddit.displayName,
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.redAccent),
-                                      ),
-                                    ),
-                                    Text(
-                                      ' - ',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () async {
-                                        Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
-                                      },
-                                      child: Text(
-                                        'u/' + widget.submission.author,
-                                        style: TextStyle(
-                                            fontSize: 15, color: Colors.blueAccent),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8),
-                                      child: AgeWidget(date: widget.submission.createdUtc,),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              PostflairWidget(widget: this.widget),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: Row(
-                                  children: <Widget>[
-                                    Text(
-                                      widget.submission.upvotes.toString() + ' Votes',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    Text(
-                                      ' - ',
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    Text(
-                                      widget.submission.numComments.toString() +
-                                          ' Comments',
-                                      style: TextStyle(fontSize: 20),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              !widget.preview && widget.submission.selftext != '' ?
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: 
-                                MarkdownBody(
-                                  data: widget.submission.selftext,
-                                  onTapLink: (link) {
-                                    FlutterWebBrowser.openWebPage(url: link); // TODO: unify with login browser
-                                  },
-                                ),
-                              ) : Container(width: 0, height: 0),
-                            ],
-                          ),
-                        ),
-                        Center(child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: ContentWidget(submission: widget.submission),
-                        )),
-                      ],
+              GestureDetector(
+                onTap: () {
+                  if(widget.preview)
+                  Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission,); }));
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: Text(
+                        widget.submission.title,
+                        maxLines: 6,
+                        style: TextStyle(fontSize: 23)
+                      ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () async {
+                                    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(futureSubreddit: widget.submission.subreddit.populate()); }));
+                                  },
+                                  child: Text(
+                                    'r/' + widget.submission.subreddit.displayName,
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.redAccent),
+                                  ),
+                                ),
+                                Text(
+                                  ' - ',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
+                                  },
+                                  child: Text(
+                                    'u/' + widget.submission.author,
+                                    style: TextStyle(
+                                        fontSize: 15, color: Colors.blueAccent),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: DateWidget(date: widget.submission.createdUtc),
+                                )
+                              ],
+                            ),
+                          ),
+                          PostflairWidget(widget: this.widget),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Row(
+                              children: <Widget>[
+                                Text(
+                                  widget.submission.upvotes.toString() + ' Votes',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                Text(
+                                  ' - ',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                Text(
+                                  widget.submission.numComments.toString() +
+                                      ' Comments',
+                                  style: TextStyle(fontSize: 20),
+                                )
+                              ],
+                            ),
+                          ),
+                          !widget.preview && widget.submission.selftext != '' ?
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: 
+                            MarkdownBody(
+                              data: widget.submission.selftext,
+                              onTapLink: (link) {
+                                FlutterWebBrowser.openWebPage(url: link); // TODO: unify with login browser
+                              },
+                            ),
+                          ) : Container(width: 0, height: 0),
+                        ],
+                      ),
+                    ),
+                    Center(child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: widget.preview ? ContentWidget(submission: widget.submission) : Container(width: 0, height: 0),
+                    )),
+                  ],
+                ),
+              ),
+              Row(
+                mainAxisAlignment: 
+                  SettingsService.getKey('post_actions_align') == 'Left' ? MainAxisAlignment.start : 
+                  SettingsService.getKey('post_actions_align') == 'Space between' ? MainAxisAlignment.spaceBetween : 
+                  MainAxisAlignment.end,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(FontAwesomeIcons.arrowCircleUp),
+                    color: _votedState == VoteState.upvoted ? Colors.red : null,
+                    onPressed: () {
+                      setState(() {
+                        VoteState newVoteState =
+                            _votedState == VoteState.upvoted
+                                ? VoteState.none
+                                : VoteState.upvoted;
+                        _votedState = newVoteState;
+                        if (newVoteState == VoteState.upvoted)
+                          widget.submission.upvote();
+                        else
+                          widget.submission.clearVote();
+                      });
+                    },
                   ),
-                  Row(
-                    mainAxisAlignment: 
-                      SettingsService.getKey('post_actions_align') == 'Left' ? MainAxisAlignment.start : 
-                      SettingsService.getKey('post_actions_align') == 'Space between' ? MainAxisAlignment.spaceBetween : 
-                      MainAxisAlignment.end,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(FontAwesomeIcons.arrowCircleUp),
-                        color: _votedState == VoteState.upvoted ? Colors.red : null,
-                        onPressed: () {
-                          setState(() {
-                            VoteState newVoteState =
-                                _votedState == VoteState.upvoted
-                                    ? VoteState.none
-                                    : VoteState.upvoted;
-                            _votedState = newVoteState;
-                            if (newVoteState == VoteState.upvoted)
-                              widget.submission.upvote();
-                            else
-                              widget.submission.clearVote();
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(FontAwesomeIcons.arrowCircleDown),
-                        color: _votedState == VoteState.downvoted ? Colors.blue : null,
-                        onPressed: () {
-                          setState(() {
-                            VoteState newVoteState =
-                                _votedState == VoteState.downvoted
-                                    ? VoteState.none
-                                    : VoteState.downvoted;
-                            _votedState = newVoteState;
-                            if (newVoteState == VoteState.downvoted)
-                              widget.submission.downvote();
-                            else
-                              widget.submission.clearVote();
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(_saved ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
-                        color: _saved ? Colors.yellowAccent : null,
-                        onPressed: () {
-                          setState(() {
-                            _saved = !_saved;
-                            if (_saved)
-                              widget.submission.save();
-                            else
-                              widget.submission.unsave();
-                          });
-                        },
-                      ),
-                      if(widget.submission.url.toString() != '')
-                      IconButton(
-                        icon: Icon(FontAwesomeIcons.bookOpen),
-                        onPressed: () async {
-                          await FlutterWebBrowser.openWebPage(url: widget.submission.url.toString()); // TODO: unify with login browser
-                        },                      
-                      ),
-                      PopupMenuButton<postExtraActions>(
-                        onSelected: (value) {
-                          switch (value) {
-                            case postExtraActions.openProfile:
-                              Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
-                              break;
-                            case postExtraActions.report:
-                              String reason = '';
-                              showDialog(
-                                context: context,
-                                builder: (dialogContext) {
-                                  return Material(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text('Reason for report:'),
-                                        TextField(
-                                          onChanged: (newVal) { reason = newVal; },
-                                        ),
-                                        RaisedButton(
-                                          child: Text('Report'),
-                                          onPressed: () {
-                                            widget.submission.report(reason);
-                                            Navigator.pop(dialogContext);
-                                          },
-                                        )
-                                      ],
+                  IconButton(
+                    icon: Icon(FontAwesomeIcons.arrowCircleDown),
+                    color: _votedState == VoteState.downvoted ? Colors.blue : null,
+                    onPressed: () {
+                      setState(() {
+                        VoteState newVoteState =
+                            _votedState == VoteState.downvoted
+                                ? VoteState.none
+                                : VoteState.downvoted;
+                        _votedState = newVoteState;
+                        if (newVoteState == VoteState.downvoted)
+                          widget.submission.downvote();
+                        else
+                          widget.submission.clearVote();
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(_saved ? FontAwesomeIcons.solidHeart : FontAwesomeIcons.heart),
+                    color: _saved ? Colors.yellowAccent : null,
+                    onPressed: () {
+                      setState(() {
+                        _saved = !_saved;
+                        if (_saved)
+                          widget.submission.save();
+                        else
+                          widget.submission.unsave();
+                      });
+                    },
+                  ),
+                  if(widget.submission.url.toString() != '')
+                  IconButton(
+                    icon: Icon(FontAwesomeIcons.bookOpen),
+                    onPressed: () async {
+                      await FlutterWebBrowser.openWebPage(url: widget.submission.url.toString()); // TODO: unify with login browser
+                    },                      
+                  ),
+                  PopupMenuButton<postExtraActions>(
+                    onSelected: (value) {
+                      switch (value) {
+                        case postExtraActions.openProfile:
+                          Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
+                          break;
+                        case postExtraActions.report:
+                          String reason = '';
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) {
+                              return Material(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text('Reason for report:'),
+                                    TextField(
+                                      onChanged: (newVal) { reason = newVal; },
                                     ),
-                                  );
-                                }
+                                    RaisedButton(
+                                      child: Text('Report'),
+                                      onPressed: () {
+                                        widget.submission.report(reason);
+                                        Navigator.pop(dialogContext);
+                                      },
+                                    )
+                                  ],
+                                ),
                               );
-                              break;
-                            default:
-                          }
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return [
-                            PopupMenuItem(
-                              value: postExtraActions.openProfile,
-                              child: Text('Open profile'),
-                            ),
-                            PopupMenuItem(
-                              value: postExtraActions.report,
-                              child: Text('Report'),
-                            ),
-                          ];
-                        },
+                            }
+                          );
+                          break;
+                        default:
+                      }
+                    },
+                    itemBuilder: (BuildContext context) {
+                      return [
+                        PopupMenuItem(
+                          value: postExtraActions.openProfile,
+                          child: Text('Open profile'),
+                        ),
+                        PopupMenuItem(
+                          value: postExtraActions.report,
+                          child: Text('Report'),
+                        ),
+                      ];
+                    },
 
-                      )
-                    ],
                   )
                 ],
               )
             ],
-          ),
-        ),
+          )
+        ],
       ),
     );
   

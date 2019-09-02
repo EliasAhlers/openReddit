@@ -51,16 +51,17 @@ class _PostScreenState extends State<PostScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: CommentListWidget(
-                    comments: this._comments,
-                    highlightUserName: widget.submission.author,
-                    leading: Column(
-                      children: <Widget>[
-                        PostWidget(submission: widget.submission, preview: false),
-                        Divider(),
-                      ],
-                    )
-                ),
-                  ))
+                      comments: this._comments,
+                      highlightUserName: widget.submission.author,
+                      leading: Column(
+                        children: <Widget>[
+                          PostWidget(submission: widget.submission, preview: false),
+                          Divider(),
+                        ],
+                      )
+                  ),
+                )
+              )
               : LinearProgressIndicator(),
           ],
         ),

@@ -16,10 +16,12 @@ class ExpandedSectionWidget extends StatefulWidget {
 class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with SingleTickerProviderStateMixin {
   AnimationController _expandController;
   Animation<double> _animation; 
+  bool renderContent;
 
   @override
   void initState() {
     super.initState();
+    renderContent = widget.expand;
     prepareAnimations();
   }
 
@@ -44,9 +46,17 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
   void didUpdateWidget(ExpandedSectionWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if(widget.expand) {
+      setState(() {
+        renderContent = true;
+      });
       _expandController.forward();
     }
     else {
+      Future.delayed(Duration(milliseconds: widget.duration + 5)).then((_) {
+        setState(() {
+          renderContent = false;
+        });
+      });
       _expandController.reverse();
     }
   }
@@ -62,7 +72,7 @@ class _ExpandedSectionWidgetState extends State<ExpandedSectionWidget> with Sing
     return SizeTransition(
       axisAlignment: 1.0,
       sizeFactor: _animation,
-      child: widget.child
+      child: renderContent ? widget.child : Container()
     );
   }
 }
