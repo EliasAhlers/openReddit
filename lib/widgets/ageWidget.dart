@@ -1,17 +1,17 @@
 
 import 'package:flutter/material.dart';
 
-class DateWidget extends StatefulWidget {
+class AgeWidget extends StatefulWidget {
   final DateTime date;
   final TextStyle textStyle;
   final String suffix;
 
-  DateWidget({Key key, @required this.date, this.textStyle, this.suffix = ''}) : super(key: key);
+  AgeWidget({Key key, @required this.date, this.textStyle, this.suffix = ''}) : super(key: key);
 
-  _DateWidgetState createState() => _DateWidgetState();
+  _AgeWidgetState createState() => _AgeWidgetState();
 }
 
-class _DateWidgetState extends State<DateWidget> {
+class _AgeWidgetState extends State<AgeWidget> {
   String _ageString = '';
 
   @override
