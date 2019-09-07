@@ -130,7 +130,7 @@ class _CommentWidgetState extends State<CommentWidget>
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 4),
-                        child: AgeWidget(
+                        child: DateWidget(
                           date: widget.comment.createdUtc,
                           textStyle: TextStyle(
                             fontSize: 12

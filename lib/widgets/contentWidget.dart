@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:chewie/chewie.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:draw/draw.dart';
@@ -9,6 +7,7 @@ import 'package:openReddit/services/infoService.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_provider/video_provider.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ContentWidget extends StatefulWidget {
@@ -30,7 +29,6 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool _gifProviderReady = false;
   bool _videoReady = false;
   String _contentType = '';
-  String _gifUrl = '';
   VideoPlayerController _controller;
   ChewieController _chewieController;
   YoutubePlayerController _ytController;
@@ -70,16 +68,29 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 
   void _prepareGifVideo() async {
+    List<Video> videoUris = VideoProvider.fromUri(
+    Uri.parse(widget.submission.url.toString()),
+    ).getVideos();
 
-    if(widget.submission.url.host.contains('imgur')) {
-      _gifUrl = widget.submission.url.toString();
-    } else if(widget.submission.url.host.contains('gfycat')) {
-      Map<String, dynamic> data = json.decode((await get('https://api.gfycat.com/v1/gfycats/' + widget.submission.url.path.split('-')[0])).body);
-      _gifUrl = data['gfyItem']['gifUrl'];
+    if((await head(videoUris[0].uri)).statusCode == 200 ) {
+      _controller = VideoPlayerController.network(
+        videoUris[0].uri.toString(),
+      );
+
+      _chewieController = ChewieController(
+        videoPlayerController: _controller,
+        autoPlay: false,
+        aspectRatio: _controller.value.aspectRatio,
+        allowFullScreen: false,
+        looping: SettingsService.getKey('content_gifs_loop'),
+        autoInitialize: SettingsService.getKey('content_gifs_preload'),
+        
+      );
+      setState(() {
+        this._gifProviderReady = true;
+      });
     }
-    setState(() {
-      this._gifProviderReady = true;
-    });
+
   }
 
   void _prepareVideo() {
@@ -111,20 +122,14 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     super.dispose();
   }
 
-  Widget _getGifProviderWidget() {
+  Widget _getGifProvider() {
     if(
       SettingsService.getKey('content_gifs_load') == 'Always' ||
       (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-      return this._gifProviderReady ? 
-      // Chewie(
-      //   controller: _chewieController,
-      // )
-      FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: _gifUrl,
-      )
-      : LinearProgressIndicator();
+    return this._gifProviderReady ? Chewie(
+      controller: _chewieController,
+    ) : LinearProgressIndicator();
     } else {
       return Container(
         child: Center(
@@ -137,7 +142,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     }   
   }
 
-  Widget _getImageWidget() {
+  Widget _getImage() {
     String imageUrl = (widget.submission.preview.length > 0)
         ? widget.submission.preview.elementAt(0).source.url.toString()
         : '';
@@ -158,6 +163,15 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
               this._showSpoiler = false;
             });
         },
+        // child: CachedNetworkImage(
+        //   imageUrl: imageUrl,
+        //   color: widget.submission.spoiler && !this._showSpoiler ? Color.lerp(Colors.black, Colors.redAccent, 0.5) : null,
+        //   alignment: Alignment.center,
+        //   fit: BoxFit.cover,
+        //   placeholder: (BuildContext context, String _) {
+        //     return LinearProgressIndicator();
+        //   },
+        // ),
         child: FadeInImage.memoryNetwork(
           placeholder: kTransparentImage,
           image: imageUrl,
@@ -175,7 +189,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     }   
   }
 
-  Widget _getGifWidget() {
+  Widget _getGif() {
     if(
       SettingsService.getKey('content_gifs_load') == 'Always' ||
       (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
@@ -195,7 +209,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     }  
   }
 
-  Widget _getYouTubeWidget() {
+  Widget _getYouTube() {
     if(
       SettingsService.getKey('content_youtube_load') == 'Always' ||
       (SettingsService.getKey('content_youtube_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
@@ -245,7 +259,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     return ytId.stringMatch(link); 
   }
 
-  Widget _getVideoWidget() {
+  Widget _getVideo() {
     if(
       SettingsService.getKey('content_videos_load') == 'Always' ||
       (SettingsService.getKey('content_videos_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
@@ -267,25 +281,24 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
     Widget content;
 
     switch (this._contentType) {
       case 'GifProvider':
-        content = this._getGifProviderWidget();
+        content = this._getGifProvider();
         break;
       case 'Image':
-        content = this._getImageWidget();
+        content = this._getImage();
         break;
       case 'Gif':
-        content = this._getGifWidget();
+        content = this._getGif();
         break;
       case 'YouTube':
-        content = this._getYouTubeWidget();
+        content = this._getYouTube();
         break;
       case 'Video':
-        content = this._getVideoWidget();
+        content = this._getVideo();
         break;
       default:
         return Container(width: 0, height: 0);

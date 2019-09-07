@@ -97,12 +97,8 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 6),
-                                  child: Text(widget.submission.url.host),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 6),
-                                  child: AgeWidget(date: widget.submission.createdUtc),
+                                  padding: const EdgeInsets.only(left: 8),
+                                  child: DateWidget(date: widget.submission.createdUtc),
                                 )
                               ],
                             ),
@@ -319,7 +315,7 @@ class PostflairWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Submission submission = widget.submission;
     return submission.pinned || submission.stickied || submission.over18 || submission.spoiler || submission.archived ||
-    submission.locked || submission.data['crosspost_parent'] != null || submission.linkFlairText != null ? Padding(
+    submission.locked || submission.linkFlairText != null ? Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: <Widget>[
@@ -329,15 +325,6 @@ class PostflairWidget extends StatelessWidget {
               'Pinned',
               style: TextStyle(
                 backgroundColor: Color.lerp(Colors.greenAccent, Colors.black, 0.3),
-              ),
-            ),
-          ) : Container(width: 0, height: 0),
-          submission.data['crosspost_parent'] != null ? ClipRRect(
-            borderRadius: BorderRadius.circular(5),
-            child: Text(
-              'Crossposted',
-              style: TextStyle(
-                backgroundColor: Color.lerp(Colors.orangeAccent, Colors.black, 0.3),
               ),
             ),
           ) : Container(width: 0, height: 0),
