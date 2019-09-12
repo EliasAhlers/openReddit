@@ -61,7 +61,7 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                       child: Text(
                         widget.submission.title,
                         maxLines: 6,
-                        style: TextStyle(fontSize: 23)
+                        style: TextStyle(fontSize: 18)
                       ),
                     ),
                     Padding(
@@ -128,11 +128,19 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                               ],
                             ),
                           ),
+                          widget.preview && widget.submission.selftext != '' ?
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8),
+                            child: Text(
+                              widget.submission.selftext,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          ) : Container(width: 0, height: 0),
                           !widget.preview && widget.submission.selftext != '' ?
                           Padding(
                             padding: EdgeInsets.symmetric(vertical: 8),
-                            child: 
-                            MarkdownBody(
+                            child: MarkdownBody(
                               data: widget.submission.selftext,
                               onTapLink: (link) {
                                 FlutterWebBrowser.openWebPage(url: link); // TODO: unify with login browser
