@@ -62,6 +62,7 @@ class _CommentWidgetState extends State<CommentWidget>
           ) : Border() : Border(),
         ),
         child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () {
             setState(() {
               this._actionsCollapsed = !this._actionsCollapsed;

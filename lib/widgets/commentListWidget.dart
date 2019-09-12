@@ -37,8 +37,15 @@ class _CommentListWidgetState extends State<CommentListWidget> {
     }
     for (dynamic comment in widget.comments) {
       replies.add(comment);
-      if(comment is Comment)
-      replies.addAll(this._processComment(comment));
+      if(comment is Comment) {
+        replies.addAll(this._processComment(comment));
+        if(comment.score < 0) {
+          _collapsedComments.add(comment.id);
+          _hiddenComments.addAll(this._processComment(comment).map((mapComment) {
+            return mapComment.id;
+          }));
+        }
+      }
     }
     this._comments = replies;
     if(this.mounted) {
@@ -53,6 +60,9 @@ class _CommentListWidgetState extends State<CommentListWidget> {
         if(comment.replies.comments.length > 0) {
           for (dynamic reply in comment.replies.comments) {
             if(reply is Comment) {
+              if(reply.score < 0) {
+                _collapsedComments.add(reply.id);
+              }
               if(reply.replies != null) {
                 replies.addAll([reply, ...reply.replies.comments]);
               } else {
@@ -79,7 +89,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
             return widget.leading;
           }
           dynamic com = this._comments[index];
-          if(com is Comment)
+          if(com is Comment) {
             return GestureDetector(
               onLongPress: () async {
                 if(_collapsedComments.contains(com.id)) {
@@ -102,9 +112,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
                   setState(() {});
                 }
               },
-              onTap: () {
-                
-              },
+              onTap: () {},
               child: !_hiddenComments.contains(com.id) ? 
               CommentWidget(
                 comment: com,
@@ -117,12 +125,13 @@ class _CommentListWidgetState extends State<CommentListWidget> {
                   });
                 },
               ) : Container(width: 0, height: 0),
-            ); 
-          else
-          return !_hiddenComments.contains(com.id) ? MoreCommentsWidget(
-            moreComments: com,
-            depth: _comments[index-1] != null ? _comments[index-1].depth : 0,
-          ) : Container(width: 0, height: 0);
+            );
+          } else {
+            return !_hiddenComments.contains(com.id) ? MoreCommentsWidget(
+              moreComments: com,
+              depth: _comments[index-1] != null ? _comments[index-1].depth : 0,
+            ) : Container(width: 0, height: 0);
+          }
         },
       ),
     );

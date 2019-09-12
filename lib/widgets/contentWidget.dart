@@ -58,7 +58,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
         this._contentType = 'Video';
         this._prepareVideo();
       });
-    } else if(widget.submission.preview.length > 0) {      
+    } else if(widget.submission.url.toString().endsWith('.jpg') || widget.submission.url.toString().endsWith('.png') || widget.submission.preview.length > 0) {      
       setState(() {
         this._contentType = 'Image';
       });
@@ -116,10 +116,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       SettingsService.getKey('content_gifs_load') == 'Always' ||
       (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-      return this._gifProviderReady ? 
-      // Chewie(
-      //   controller: _chewieController,
-      // )
+      return this._gifProviderReady ?
       FadeInImage.memoryNetwork(
         placeholder: kTransparentImage,
         image: _gifUrl,
@@ -138,9 +135,13 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   Widget _getImageWidget() {
-    String imageUrl = (widget.submission.preview.length > 0)
-        ? widget.submission.preview.elementAt(0).source.url.toString()
-        : '';
+    String imageUrl = '';
+
+    if(widget.submission.url.toString().endsWith('.jpg') || widget.submission.url.toString().endsWith('.png')) {
+      imageUrl = widget.submission.url.toString();
+    } else {
+      imageUrl = widget.submission.preview.last.resolutions.last.url.toString();
+    }
 
     if(
       SettingsService.getKey('content_images_load') == 'Always' ||
@@ -169,7 +170,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
           child: 
             SettingsService.getKey('content_images_load') == 'WiFi' ?
             Text('You only enabled images while beeing connected to WiFi') :
-            Text('You disabled pictures in the settings'),
+            Text('You disabled images in the settings'),
         ),
       );
     }   
