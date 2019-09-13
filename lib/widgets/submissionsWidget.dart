@@ -43,7 +43,7 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> with AutomaticKee
   @override
   void dispose() {
     super.dispose();
-    _submissionSubscription.cancel();
+    if(_submissionSubscription != null) _submissionSubscription.cancel();
   }
 
   @override

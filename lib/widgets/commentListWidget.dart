@@ -37,7 +37,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
   @override
   void dispose() {
     super.dispose();
-    _commentSubscription.cancel();
+    if(_commentSubscription != null) _commentSubscription.cancel();
   }
 
   void _prepareComments() {

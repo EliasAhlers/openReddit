@@ -49,6 +49,7 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
           Column(
             children: <Widget>[
               GestureDetector(
+                behavior: HitTestBehavior.opaque,
                 onTap: () {
                   if(widget.preview)
                   Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission); }));
@@ -135,6 +136,7 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                               widget.submission.selftext,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.start,
                             )
                           ) : Container(width: 0, height: 0),
                           !widget.preview && widget.submission.selftext != '' ?
