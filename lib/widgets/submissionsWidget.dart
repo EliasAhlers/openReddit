@@ -15,7 +15,7 @@ class SubmissionsWidget extends StatefulWidget {
   _SubmissionsWidgetState createState() => _SubmissionsWidgetState();
 }
 
-class _SubmissionsWidgetState extends State<SubmissionsWidget> with AutomaticKeepAliveClientMixin{
+class _SubmissionsWidgetState extends State<SubmissionsWidget> with AutomaticKeepAliveClientMixin {
 
   List<Submission> _submissions = [];
   StreamSubscription<UserContent> _submissionSubscription;
@@ -48,6 +48,7 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> with AutomaticKee
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return ListView.separated(
       itemCount: _submissions.length + 1,
       cacheExtent: 10,

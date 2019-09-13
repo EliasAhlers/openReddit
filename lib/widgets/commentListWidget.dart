@@ -21,12 +21,15 @@ class CommentListWidget extends StatefulWidget {
   _CommentListWidgetState createState() => _CommentListWidgetState();
 }
 
-class _CommentListWidgetState extends State<CommentListWidget> {
+class _CommentListWidgetState extends State<CommentListWidget> with AutomaticKeepAliveClientMixin {
 
   List<dynamic> _comments = [];
   List<String> _collapsedComments = [];
   List<String> _hiddenComments = [];
   StreamSubscription _commentSubscription;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -53,7 +56,9 @@ class _CommentListWidgetState extends State<CommentListWidget> {
     } else if(widget.commentStream != null) {
       _commentSubscription = widget.commentStream.listen((Comment comment) {
         if(comment is Comment) {
-          _processComment(comment, false);
+          setState(() {
+            _processComment(comment, false);
+          });
         }
       });
     }
@@ -93,6 +98,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Material(
       child: ListView.builder(
         itemCount: this._comments.length,
@@ -151,4 +157,5 @@ class _CommentListWidgetState extends State<CommentListWidget> {
       ),
     );
   }
+
 }
