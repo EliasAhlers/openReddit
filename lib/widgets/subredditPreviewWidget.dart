@@ -62,8 +62,8 @@ class _SubredditPreviewWidgetState extends State<SubredditPreviewWidget> {
             ),
             leading: _subreddit.iconImage.toString() != '' ?
                 Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  height: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.11,
+                  height: MediaQuery.of(context).size.width * 0.11,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     image: DecorationImage(
@@ -71,8 +71,8 @@ class _SubredditPreviewWidgetState extends State<SubredditPreviewWidget> {
                     )
                   ),
                 ) : Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  height: MediaQuery.of(context).size.width * 0.2,
+                  width: MediaQuery.of(context).size.width * 0.11,
+                  height: MediaQuery.of(context).size.width * 0.11,
                 ),
             onTap: () {
               Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return SubredditScreen(subreddit: _subreddit); }));

@@ -76,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     RedditService.reddit.user.subreddits().listen((Subreddit subreddit) {
       setState(() {
         this._subscribedSubreddits.add(subreddit);
+        this._subscribedSubreddits.sort((a, b) => a.displayName.compareTo(b.displayName));
       });
     });
     return;
@@ -161,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if(this._subscribedSubreddits[index] != null) {
                     if(this._subscribedSubreddits[index].iconImage != null && this._subscribedSubreddits[index].iconImage.toString() != '')  {
                       return ListTile(
-                        title: Text(this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
+                        title: Text('r/' + this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -183,7 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
                     else return ListTile(
-                      title: Text(this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
+                      title: Text('r/' + this._subscribedSubreddits[index].displayName ?? 'Error while loading'),
                       leading: Container(
                         width: 40,
                         height: 40,
