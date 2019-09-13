@@ -1,5 +1,6 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:openReddit/widgets/ageWidget.dart';
 import 'package:openReddit/widgets/commentListWidget.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
@@ -68,7 +69,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Expanded(flex: 1, child: Container(width: 0, height: 0)),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     if(_redditor.data['icon_img'].toString() != '')
                       Container(
@@ -86,25 +89,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           )
                         ),
                       ),
-                    Text(
-                      'u/' + _redditor.displayName,
-                      style: TextStyle(
-                        fontSize: 30
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(
+                        'u/' + _redditor.displayName,
+                        style: TextStyle(
+                          fontSize: 30
+                        ),
                       ),
                     ),
 
                   ],
                 ),
-                Text(
-                  'Karma: ' + _redditor.linkKarma.toString()
+                Expanded(flex: 1, child: Container(width: 0, height: 0)),
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            'Karma:',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            (_redditor.linkKarma + _redditor.commentKarma).toString(),
+                            style: TextStyle(
+                              fontSize: 25,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            'Age:',
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          AgeWidget(
+                            date: _redditor.createdUtc,
+                            textStyle: TextStyle(
+                              fontSize: 25,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  'Commentkarma: ' + _redditor.commentKarma.toString()
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          Text('Commentkarma: ' + _redditor.commentKarma.toString()),
+                          Text('Linkkarma: ' + _redditor.linkKarma.toString()),
+                        ],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          Text('Exact age: ' + DateTime.now().difference(_redditor.createdUtc).inDays.toString() + ' Days'),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                Text(
-                  'Age: ' + (DateTime.now().difference(_redditor.createdUtc).inDays / 365).round().toString()  + ' Years ' +
-                  (DateTime.now().difference(_redditor.createdUtc).inDays % 365).toString()  + ' Days',
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: FutureBuilder(
+                    future: _redditor.trophies(),
+                    builder: (BuildContext context, AsyncSnapshot<List<Trophy>> snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          return Container(width: 0, height: 0);
+                        case ConnectionState.active:
+                          return Container(width: 0, height: 0);
+                        case ConnectionState.waiting:
+                          return LinearProgressIndicator();
+                        case ConnectionState.done:
+                          if (snapshot.hasError)
+                            return Text('Error: ${snapshot.error}');
+                          else return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              for (var trophy in snapshot.data)
+                                Image.network(trophy.icon_70)
+                            ],
+                          );
+                      }
+                      return null;
+                    },
+                  ),
                 ),
+                Divider(),
+                Expanded(flex: 10, child: Container(width: 0, height: 0)),
               ],
             ),
             if(!_postStreamReady)
