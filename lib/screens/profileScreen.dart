@@ -16,40 +16,30 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   Redditor _redditor;
-  List<Submission> _posts = [];
-  List<Comment> _comments = [];
+  bool _postStreamReady = false;
+  bool _commentStreamReady = false;
 
   @override
   void initState() {
-    this.getRedittor();
+    this._getRedittor();
     super.initState();
   }
 
-  void getRedittor() async {
+  void _getRedittor() async {
     if(widget.redditorRef != null) {
       Redditor populatedRedditor = await widget.redditorRef.populate();
       setState(() {
         _redditor = populatedRedditor;
+        _postStreamReady = true;
+        _commentStreamReady = true;
       });
     } else {
       setState(() {
         _redditor = widget.redditor;
+        _postStreamReady = true;
+        _commentStreamReady = true;
       });
     }
-    this.getUserContent();
-  }
-
-  void getUserContent() async {
-    List<UserContent> userContents = await _redditor.newest().toList();
-    userContents.forEach((userContent) async {
-      if(userContent is Submission) {
-        _posts.add(userContent);
-      } else if(userContent is Comment) {
-        _comments.add(userContent);
-      }
-    });
-    if(this.mounted)
-    setState(() {});
   }
 
   @override
@@ -90,8 +80,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             fit: BoxFit.cover,
                             image: NetworkImage(
                               _redditor.data['icon_img'].toString().contains('/avatars/') && !_redditor.data['icon_img'].toString().contains('www.redditstatic.com') ?
-                              'https://www.redditstatic.com' + _redditor.data['icon_img'].toString() :
-                              _redditor.data['icon_img'].toString(),
+                              'https://www.redditstatic.com' + _redditor.data['icon_img'].toString().split(':').first :
+                              _redditor.data['icon_img'].toString().split('?').first,
                             ),
                           )
                         ),
@@ -117,14 +107,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             ),
-            if(_posts.length == 0)
+            if(!_postStreamReady)
               LinearProgressIndicator(),
-            if(_posts.length != 0)
-              SubmissionsWidget(submissions: _posts),
-            if(_comments.length == 0)
+            if(_postStreamReady)
+              SubmissionsWidget(userConentStream: _redditor.newest()),
+            if(!_commentStreamReady)
               LinearProgressIndicator(),
-            if(_comments.length != 0)
-              CommentListWidget(comments: _comments)
+            if(_commentStreamReady)
+              CommentListWidget(commentStream: _redditor.comments.newest().cast<Comment>()),
           ],
         )
       ),

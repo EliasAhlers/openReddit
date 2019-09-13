@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/widgets/postWidget.dart';
@@ -13,15 +15,20 @@ class SubmissionsWidget extends StatefulWidget {
   _SubmissionsWidgetState createState() => _SubmissionsWidgetState();
 }
 
-class _SubmissionsWidgetState extends State<SubmissionsWidget> {
+class _SubmissionsWidgetState extends State<SubmissionsWidget> with AutomaticKeepAliveClientMixin{
 
   List<Submission> _submissions = [];
+  StreamSubscription<UserContent> _submissionSubscription;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
     if(widget.userConentStream != null) {
-      widget.userConentStream.listen((submission) {
+      _submissionSubscription = widget.userConentStream.listen((submission) {
         if(submission is Submission) {
+          if(this.mounted)
           setState(() {
             _submissions.add(submission);
           });
@@ -31,6 +38,12 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
       _submissions = widget.submissions;
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _submissionSubscription.cancel();
   }
 
   @override
@@ -55,4 +68,5 @@ class _SubmissionsWidgetState extends State<SubmissionsWidget> {
       },
     );
   }
+
 }

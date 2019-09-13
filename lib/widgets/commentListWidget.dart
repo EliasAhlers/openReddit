@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/services/settingsService.dart';
@@ -9,11 +11,12 @@ import 'moreCommentsWidget.dart';
 
 class CommentListWidget extends StatefulWidget {
   final List<dynamic> comments;
+  final Stream<Comment> commentStream;
   final Widget leading;
   final bool noScroll;
   final String highlightUserName;
 
-  CommentListWidget({Key key, this.comments, this.leading, this.noScroll = false, this.highlightUserName = ''}) : super(key: key);
+  CommentListWidget({Key key, this.comments, this.commentStream, this.leading, this.noScroll = false, this.highlightUserName = ''}) : super(key: key);
 
   _CommentListWidgetState createState() => _CommentListWidgetState();
 }
@@ -23,57 +26,69 @@ class _CommentListWidgetState extends State<CommentListWidget> {
   List<dynamic> _comments = [];
   List<String> _collapsedComments = [];
   List<String> _hiddenComments = [];
+  StreamSubscription _commentSubscription;
 
   @override
   void initState() {
-    this._processComments();
+    this._prepareComments();
     super.initState();
   }
 
-  void _processComments() async {
-    List<dynamic> replies = [];
+  @override
+  void dispose() {
+    super.dispose();
+    _commentSubscription.cancel();
+  }
+
+  void _prepareComments() {
     if(widget.leading != null) {
-      replies.add(widget.leading);
+      _comments.add(widget.leading);
     }
-    for (dynamic comment in widget.comments) {
-      replies.add(comment);
-      if(comment is Comment) {
-        replies.addAll(this._processComment(comment));
-        if(comment.score < 0) {
-          _collapsedComments.add(comment.id);
-          _hiddenComments.addAll(this._processComment(comment).map((mapComment) {
-            return mapComment.id;
-          }));
+    if(widget.comments != null) {
+      for(var comment in widget.comments) {
+        if(comment is Comment) {
+          _processComment(comment, false);
         }
       }
-    }
-    this._comments = replies;
-    if(this.mounted) {
-      setState(() {});
+    } else if(widget.commentStream != null) {
+      _commentSubscription = widget.commentStream.listen((Comment comment) {
+        if(comment is Comment) {
+          _processComment(comment, false);
+        }
+      });
     }
   }
 
-  List<dynamic> _processComment(Comment comment) {
-    List<dynamic> replies = [];
-    if(comment.replies != null) {
-      if(comment.replies.comments != null) {
-        if(comment.replies.comments.length > 0) {
-          for (dynamic reply in comment.replies.comments) {
+  void _processComment(Comment comment, bool hidden) {
+    _comments.add(comment);
+    if(comment is Comment) {
+      if(comment.score < 0 || hidden) _collapsedComments.add(comment.id);
+      if(comment.replies != null) {
+        if(comment.replies.comments != null || comment.replies.comments.length > 0) {
+          for(var reply in comment.replies.comments) {
             if(reply is Comment) {
-              if(reply.score < 0) {
-                _collapsedComments.add(reply.id);
-              }
-              if(reply.replies != null) {
-                replies.addAll([reply, ...reply.replies.comments]);
-              } else {
-                replies.add(reply);
-              }
+              _processComment(reply, hidden || comment.score < 0);
             }
           }
         }
       }
     }
-    return replies;
+  }
+
+  List<Comment> _getChildComments(Comment comment) {
+    List<Comment> childComments = [];
+    if(comment is Comment) {
+      if(comment.replies != null) {
+        if(comment.replies.comments != null || comment.replies.comments.length > 0) {
+          for(var reply in comment.replies.comments) {
+            if(reply is Comment) {
+              childComments.addAll([reply, ..._getChildComments(reply)]);
+            }
+          }
+        }
+      }
+    }
+    return childComments;
   }
 
   @override
@@ -94,7 +109,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
               onLongPress: () async {
                 if(_collapsedComments.contains(com.id)) {
                   _collapsedComments.remove(com.id);
-                  this._processComment(com).map((mapComment) {
+                  _getChildComments(com).map((mapComment) {
                     return mapComment.id;
                   }).forEach((commentId) {
                     _hiddenComments.remove(commentId);
@@ -104,7 +119,7 @@ class _CommentListWidgetState extends State<CommentListWidget> {
                   setState(() {});
                 } else {
                   _collapsedComments.add(com.id);
-                  _hiddenComments.addAll(this._processComment(com).map((mapComment) {
+                  _hiddenComments.addAll(_getChildComments(com).map((mapComment) {
                     return mapComment.id;
                   }));
                   if(SettingsService.getKey('comment_hide_vibrate'))
