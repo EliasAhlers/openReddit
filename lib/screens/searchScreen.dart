@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
 import 'package:openReddit/services/redditService.dart';
-import 'package:openReddit/widgets/postWidget.dart';
 import 'package:openReddit/widgets/subredditPreviewWidget.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -15,14 +14,14 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
 
   List<Subreddit> _subreddits = [];
-  List<Submission> _submissions = [];
+  // List<Submission> _submissions = [];
 
   StreamSubscription<SubredditRef> _subredditSubscription;
   // StreamSubscription<UserContent> _submissionSubscription;
 
   void _search(String query) {
     _subreddits = [];
-    _submissions = [];
+    // _submissions = [];
     _subredditSubscription = RedditService.reddit.subreddits.search(query, limit: 5).listen((subreddit) {
       setState(() {
         _subreddits.add(subreddit);

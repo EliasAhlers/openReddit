@@ -43,6 +43,7 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Material(
       child: Column(
         children: <Widget>[

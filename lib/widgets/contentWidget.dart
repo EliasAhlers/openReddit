@@ -140,7 +140,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
     if(widget.submission.url.toString().endsWith('.jpg') || widget.submission.url.toString().endsWith('.png')) {
       imageUrl = widget.submission.url.toString();
     } else {
-      imageUrl = widget.submission.preview.last.resolutions.last.url.toString();
+      imageUrl = widget.submission.preview.last.source.url.toString();
     }
 
     if(
