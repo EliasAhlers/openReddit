@@ -3,6 +3,7 @@ import 'package:flutter_inappbrowser/flutter_inappbrowser.dart';
 class LoginAppBrowser extends InAppBrowser {
   Function codeCallback;
   Function errorCallback;
+  Function exitCallback;
   String state;
 
   @override
@@ -26,12 +27,20 @@ class LoginAppBrowser extends InAppBrowser {
 
   @override
   void onLoadError(String url, int code, String message) {
+    super.onLoadError(url, code, message);
     print("\n\nCan't load $url.. Error: $message\n\n");
   }
 
-  void setCallbacks({ Function codeCallback, Function errorCallback, String state }) {
+  @override
+  void onExit() {
+    super.onExit();
+    exitCallback();
+  }
+
+  void setCallbacks({ Function codeCallback, Function errorCallback, Function exitCallback, String state }) {
     this.codeCallback = codeCallback ?? () {};
     this.errorCallback = errorCallback ?? () {};
+    this.exitCallback = exitCallback ?? () {};
     this.state = state;
   }
 

@@ -11,8 +11,9 @@ import 'package:random_string/random_string.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool setup;
+  final bool disableRedirect;
 
-  LoginScreen({Key key, this.setup = false}) : super(key: key);
+  LoginScreen({Key key, this.setup = false, this.disableRedirect = false}) : super(key: key);
 
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -20,6 +21,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   
   bool _error = false;
+  bool _codeReady = false;
   String _errorReason = '';
   String _state = randomAlphaNumeric(16);
   LoginAppBrowser _loginAppBrowser;
@@ -27,16 +29,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() { 
     this._loginAppBrowser = new LoginAppBrowser();
-    this.loginToReddit();
     super.initState();
+    this.loginToReddit();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: this._error ? Padding(
-        padding: const EdgeInsets.all(8),
-        child: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: this._error ? Center(
           child: Column(
             children: <Widget>[
               Padding(
@@ -82,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               RaisedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginScreen(setup: widget.setup); }));
+                  Navigator.pushReplacement(context, new CupertinoPageRoute(builder: (BuildContext context) { return LoginScreen(setup: widget.setup, disableRedirect: true); }));
                 },
                 child: Text('Try again'),
               ),
@@ -91,8 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-        ),
-      ) : Text('If you see this, the dev fucked up. Sorry :)'),
+        ) : Text('If you see this, the dev fucked up. Sorry :) The error is: ' + _errorReason),
+      ),
     );
   }
 
@@ -100,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Function login = () {
 
-      if(!SettingsService.getKey('setupDone') && !widget.setup) {
+      if(!SettingsService.getKey('setupDone') && !widget.setup && !widget.disableRedirect) {
         Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return WelcomeSetupScreen(); }));
         return;
       }
@@ -142,12 +144,18 @@ class _LoginScreenState extends State<LoginScreen> {
         this._loginAppBrowser.setCallbacks(
           codeCallback: (String code) {
             this.confirmRedditLogin(code);
+            _codeReady = true;
           },
           errorCallback: (String errorReason) {
             setState(() {
               this._error = true;
               this._errorReason = errorReason;
             });
+          },
+          exitCallback: () async {
+            await Future.delayed(Duration(milliseconds: 500));
+            if(!_codeReady && !_error)
+              Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(disableRedirect: true); }));
           },
           state: this._state
         );
@@ -179,6 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
       this._loginAppBrowser.close();
       setState(() {
         this._error = true;
+        this._errorReason = e;
       });
       return;
     }
