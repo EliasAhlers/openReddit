@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:chewie/chewie.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:draw/draw.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:openReddit/services/infoService.dart';
@@ -31,19 +33,21 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   bool _videoReady = false;
   String _contentType = '';
   String _gifUrl = '';
+  double _aspectRatio = 1;
   VideoPlayerController _controller;
   ChewieController _chewieController;
   YoutubePlayerController _ytController;
 
   @override
   void initState() {
+    print(widget.submission.url);
     if(
       (widget.submission.url.toString().contains('imgur.com') || widget.submission.url.toString().contains('gfycat.com')) && 
       !widget.submission.url.toString().contains('.jpg') && !widget.submission.url.toString().contains('.png') 
     ) {
       setState(() {
-        this._contentType = 'GifProvider';
         this._prepareGifVideo();
+        this._contentType = 'GifProvider';
       });
     } else  if(widget.submission.url.toString().endsWith('.gif') || widget.submission.url.toString().endsWith('.gifv')) {
       setState(() {
@@ -67,19 +71,49 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => false;
 
   void _prepareGifVideo() async {
 
     if(widget.submission.url.host.contains('imgur')) {
-      _gifUrl = widget.submission.url.toString();
+      _gifUrl = widget.submission.url.toString().replaceAll('.gifv', '.mp4').replaceAll('.gif', '.mp4');
+      print('https://api.imgur.com/3/image/' + widget.submission.url.path.replaceAll('/', '').replaceAll('.gifv', '').replaceAll('.gif', ''));
+      Map<String, dynamic> data = json.decode((await get('https://api.imgur.com/3/image/' + widget.submission.url.path.replaceAll('/', '').replaceAll('.gifv', '').replaceAll('.gif', ''))).body);
+      try {
+        _aspectRatio = data['data']['width'] / data['data']['height'];
+      } catch (e) {
+        _aspectRatio = 1;
+      }
     } else if(widget.submission.url.host.contains('gfycat')) {
       Map<String, dynamic> data = json.decode((await get('https://api.gfycat.com/v1/gfycats/' + widget.submission.url.path.split('-')[0])).body);
-      _gifUrl = data['gfyItem']['gifUrl'];
+      _gifUrl = data['gfyItem']['mp4Url'];
+      try {
+        _aspectRatio = data['gfyItem']['width'] / data['gfyItem']['height'];
+      } catch (e) {
+        _aspectRatio = 1;
+      }
     }
-    setState(() {
-      this._gifProviderReady = true;
+
+    _controller = VideoPlayerController.network(
+      _gifUrl
+    )..initialize().then((_) {
+      if(mounted)
+        setState(() {
+          this._gifProviderReady = true;
+        });
+        _controller.setLooping(true);
+        _controller.play();
     });
+
+    // this._chewieController = ChewieController(
+    //   videoPlayerController: _controller,
+    //   autoPlay: true,
+    //   allowFullScreen: false,
+    //   showControls: true,
+    //   aspectRatio: aspectRatio,
+    //   looping: SettingsService.getKey('content_gifs_loop'),
+    //   autoInitialize: SettingsService.getKey('content_gifs_preload'),
+    // );
   }
 
   void _prepareVideo() {
@@ -116,10 +150,11 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       SettingsService.getKey('content_gifs_load') == 'Always' ||
       (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-      return this._gifProviderReady ?
-      FadeInImage.memoryNetwork(
-        placeholder: kTransparentImage,
-        image: _gifUrl,
+      return this._gifProviderReady && _controller.value.initialized ?
+      // Chewie(controller: _chewieController)
+      AspectRatio(
+        aspectRatio: _controller.value.aspectRatio,
+        child: VideoPlayer(_controller),
       )
       : LinearProgressIndicator();
     } else {
@@ -159,10 +194,16 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
               this._showSpoiler = false;
             });
         },
-        child: FadeInImage.memoryNetwork(
-          placeholder: kTransparentImage,
-          image: imageUrl,
-        ),
+        child: 
+        ExtendedImage.network(
+          imageUrl,
+          cache: true,
+          retries: 3,
+        )
+        // FadeInImage.memoryNetwork(
+        //   placeholder: kTransparentImage,
+        //   image: imageUrl,
+        // ),
       );
     } else {
       return Container(

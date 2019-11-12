@@ -45,6 +45,7 @@ dependencies:
   dynamic_theme: ^1.0.1
   connectivity: ^0.4.3+7
   transparent_image: ^1.0.0
+  extended_image: ^0.6.1
 
 dev_dependencies:
   flutter_test:

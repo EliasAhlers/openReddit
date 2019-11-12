@@ -23,9 +23,10 @@ class _SearchScreenState extends State<SearchScreen> {
     _subreddits = [];
     // _submissions = [];
     _subredditSubscription = RedditService.reddit.subreddits.search(query, limit: 5).listen((subreddit) {
-      setState(() {
-        _subreddits.add(subreddit);
-      });
+      if(mounted)
+        setState(() {
+          _subreddits.add(subreddit);
+        });
     });
     // _submissionSubscription = RedditService.reddit.subreddit('all').search(query).listen((post) {
     //   setState(() {
