@@ -364,6 +364,7 @@ class _SpoilerWidgetState extends State<SpoilerWidget> {
             style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
+              color: Colors.white,
               backgroundColor: Colors.black,
             ),
           ) : Container(),

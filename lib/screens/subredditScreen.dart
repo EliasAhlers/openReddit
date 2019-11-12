@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:draw/draw.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:openReddit/widgets/submissionsWidget.dart';
 
@@ -149,14 +151,15 @@ class _SubredditScreenState extends State<SubredditScreen> {
                       icon: Icon(_subscribed ? FontAwesomeIcons.bellSlash : FontAwesomeIcons.bell),
                       color: _subscribed ? Colors.blueAccent : null,
                       onPressed: () {
-                        if(_subscribed) {
-                          _subscribed = false;
-                          _subreddit.unsubscribe();
-                        } else {
-                          _subscribed = true;
-                          _subreddit.subscribe();
-                        }
-                        setState(() {});
+                        setState(() {
+                          if(_subscribed) {
+                            _subscribed = false;
+                            _subreddit.unsubscribe();
+                          } else {
+                            _subscribed = true;
+                            _subreddit.subscribe();
+                          }
+                        });
                       },
                     )
                   ],
@@ -168,24 +171,32 @@ class _SubredditScreenState extends State<SubredditScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Divider(height: 5),
                 ),
-                Text('Subreddit rules:'),
-                this._rules != null ? 
+                Text('Subreddit description & rules:'),
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: this._rules.length,
+                  child: this._rules != null ? 
+                  ListView.separated(
+                    itemCount: this._rules.length + 1,
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
+                      if(index == 0) {
+                        return MarkdownBody(
+                          data: _subreddit.data["description"],
+                          onTapLink: (link) {
+                            FlutterWebBrowser.openWebPage(url: link); // TODO: unify with login browser
+                          },
+                        );
+                      }
                       return ListTile(
-                        title: Text(this._rules[index].shortName),
-                        subtitle: Text(this._rules[index].description),
+                        title: Text(this._rules[index-1].shortName),
+                        subtitle: Text(this._rules[index-1].description),
                       );
                     },
                     separatorBuilder: (BuildContext context, int index) {
                       return Divider();
                     },
                   )
+                  : Text('Loading rules...'),
                 )
-                : Text('Loading rules...'),
               ],
             ),
           ),
