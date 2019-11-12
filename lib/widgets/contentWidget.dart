@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:chewie/chewie.dart';
 import 'package:connectivity/connectivity.dart';
@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:openReddit/services/infoService.dart';
 import 'package:openReddit/services/settingsService.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -27,13 +26,12 @@ class ContentWidget extends StatefulWidget {
 
 class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveClientMixin {
 
-  bool _showSpoiler = false;
+  bool _showSpoiler = true;
   bool _loadYouTube = false;
   bool _gifProviderReady = false;
   bool _videoReady = false;
   String _contentType = '';
   String _gifUrl = '';
-  double _aspectRatio = 1;
   VideoPlayerController _controller;
   ChewieController _chewieController;
   YoutubePlayerController _ytController;
@@ -41,6 +39,7 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
   @override
   void initState() {
     print(widget.submission.url);
+    this._showSpoiler = widget.submission.spoiler;
     if(
       (widget.submission.url.toString().contains('imgur.com') || widget.submission.url.toString().contains('gfycat.com')) && 
       !widget.submission.url.toString().contains('.jpg') && !widget.submission.url.toString().contains('.png') 
@@ -77,21 +76,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
     if(widget.submission.url.host.contains('imgur')) {
       _gifUrl = widget.submission.url.toString().replaceAll('.gifv', '.mp4').replaceAll('.gif', '.mp4');
-      print('https://api.imgur.com/3/image/' + widget.submission.url.path.replaceAll('/', '').replaceAll('.gifv', '').replaceAll('.gif', ''));
-      Map<String, dynamic> data = json.decode((await get('https://api.imgur.com/3/image/' + widget.submission.url.path.replaceAll('/', '').replaceAll('.gifv', '').replaceAll('.gif', ''))).body);
-      try {
-        _aspectRatio = data['data']['width'] / data['data']['height'];
-      } catch (e) {
-        _aspectRatio = 1;
-      }
     } else if(widget.submission.url.host.contains('gfycat')) {
       Map<String, dynamic> data = json.decode((await get('https://api.gfycat.com/v1/gfycats/' + widget.submission.url.path.split('-')[0])).body);
       _gifUrl = data['gfyItem']['mp4Url'];
-      try {
-        _aspectRatio = data['gfyItem']['width'] / data['gfyItem']['height'];
-      } catch (e) {
-        _aspectRatio = 1;
-      }
     }
 
     _controller = VideoPlayerController.network(
@@ -102,18 +89,9 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
           this._gifProviderReady = true;
         });
         _controller.setLooping(true);
-        _controller.play();
+        if(!this.widget.submission.spoiler)
+          _controller.play();
     });
-
-    // this._chewieController = ChewieController(
-    //   videoPlayerController: _controller,
-    //   autoPlay: true,
-    //   allowFullScreen: false,
-    //   showControls: true,
-    //   aspectRatio: aspectRatio,
-    //   looping: SettingsService.getKey('content_gifs_loop'),
-    //   autoInitialize: SettingsService.getKey('content_gifs_preload'),
-    // );
   }
 
   void _prepareVideo() {
@@ -151,11 +129,14 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
       return this._gifProviderReady && _controller.value.initialized ?
-      // Chewie(controller: _chewieController)
-      AspectRatio(
-        aspectRatio: _controller.value.aspectRatio,
-        child: VideoPlayer(_controller),
-      )
+      SpoilerWidget(
+        isSpoiler: this.widget.submission.spoiler,
+        contentWidget: AspectRatio(
+          aspectRatio: _controller.value.aspectRatio,
+          child: VideoPlayer(_controller),
+        ),
+        videoController: _controller,
+      )      
       : LinearProgressIndicator();
     } else {
       return Container(
@@ -182,28 +163,13 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       SettingsService.getKey('content_images_load') == 'Always' ||
       (SettingsService.getKey('content_images_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-      return GestureDetector(
-        onTap: !this._showSpoiler ? () {
-          setState(() {
-            this._showSpoiler = true;
-          });
-        } : null,
-        onLongPress: () {
-          if(this._showSpoiler)
-            setState(() {
-              this._showSpoiler = false;
-            });
-        },
-        child: 
-        ExtendedImage.network(
+      return SpoilerWidget(
+        isSpoiler: this.widget.submission.spoiler,
+        contentWidget: ExtendedImage.network(
           imageUrl,
           cache: true,
           retries: 3,
-        )
-        // FadeInImage.memoryNetwork(
-        //   placeholder: kTransparentImage,
-        //   image: imageUrl,
-        // ),
+        ),
       );
     } else {
       return Container(
@@ -222,8 +188,11 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       SettingsService.getKey('content_gifs_load') == 'Always' ||
       (SettingsService.getKey('content_gifs_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-      return Image.network(
-        widget.submission.url.toString().replaceAll('.gifv', '.gifv'),
+      return SpoilerWidget(
+        isSpoiler: this.widget.submission.spoiler,
+        contentWidget: Image.network(
+          widget.submission.url.toString().replaceAll('.gifv', '.gifv'),
+        ),
       );
     } else {
       return Container(
@@ -292,9 +261,14 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       SettingsService.getKey('content_videos_load') == 'Always' ||
       (SettingsService.getKey('content_videos_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-    return this._videoReady ? Chewie(
-      controller: _chewieController)
-    : LinearProgressIndicator();
+    return this._videoReady ?
+      SpoilerWidget(
+        isSpoiler: this.widget.submission.spoiler,
+        contentWidget: Chewie(
+          controller: _chewieController
+        ),
+      )
+      : LinearProgressIndicator();
     } else {
       return Container(
         child: Center(
@@ -340,4 +314,73 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
 
   }
 
+}
+
+class SpoilerWidget extends StatefulWidget {
+  const SpoilerWidget({
+    Key key,
+    @required this.isSpoiler,
+    @required this.contentWidget,
+    this.videoController,
+  }): super(key: key);
+
+  final bool isSpoiler;
+  final Widget contentWidget;
+  final VideoPlayerController videoController;
+
+  @override
+  _SpoilerWidgetState createState() => _SpoilerWidgetState();
+}
+
+class _SpoilerWidgetState extends State<SpoilerWidget> {
+
+  bool _showSpoiler = true;
+
+  @override
+  void initState() {
+    _showSpoiler = this.widget.isSpoiler;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          this.widget.contentWidget,
+          this._showSpoiler ? Container(
+            width: 1,
+            height: 1,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+              child: Container(
+                color: Colors.black.withOpacity(0.9),
+              ),
+            ),
+          ): Container(),
+          this._showSpoiler ? Text(
+            'Spoiler, click to show',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              backgroundColor: Colors.black,
+            ),
+          ) : Container(),
+        ],
+      ),
+      onTap: () {
+        setState(() {
+          this._showSpoiler = !this._showSpoiler;
+          if(this.widget.videoController != null) {
+            if(this._showSpoiler) {
+              this.widget.videoController.pause();
+            } else {
+              this.widget.videoController.play();
+            }
+          }
+        });
+      },
+    );
+  }
 }
