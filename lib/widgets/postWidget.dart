@@ -231,31 +231,36 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                     onPressed: () async {
                       String reply = '';
                       bool loading = false;
-                      showModalBottomSheet(
+                      Comment replyComment = await showModalBottomSheet(
                         context: context,
                         builder: (BuildContext dialogContext) {
                           return Material(
-                            child: Column(
-                              children: <Widget>[
-                                Text('Reply:'),
-                                TextField(
-                                  onChanged: (String newVal) { reply = newVal; },
-                                ),
-                                !loading ? RaisedButton(
-                                  child: Text('Reply'),
-                                  onPressed: () async {
-                                    loading = true;
-                                    Comment replyComment = await widget.submission.reply(reply);
-                                    await Future.delayed(Duration(seconds: 5));
-                                    if(widget.onReply != null) widget.onReply(replyComment);
-                                    Navigator.pop(dialogContext);
-                                  },
-                                ) : LinearProgressIndicator(),
-                              ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: <Widget>[
+                                  Text('Reply:'),
+                                  TextField(
+                                    onChanged: (String newVal) { reply = newVal; },
+                                    maxLines: null,
+                                  ),
+                                  !loading ? RaisedButton(
+                                    child: Text('Reply'),
+                                    onPressed: () async {
+                                      loading = true;
+                                      Comment replyComment = await widget.submission.reply(reply);
+                                      Navigator.pop(dialogContext, replyComment);
+                                    },
+                                  ) : LinearProgressIndicator(),
+                                ],
+                              ),
                             ),
                           );
                         }
                       );
+                      if(replyComment != null) {
+                        if(widget.onReply != null) widget.onReply(replyComment);
+                      }
                     },                      
                   ),
                   PopupMenuButton<postExtraActions>(
@@ -266,24 +271,28 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                           break;
                         case postExtraActions.report:
                           String reason = '';
-                          showDialog(
+                          showModalBottomSheet(
                             context: context,
-                            builder: (dialogContext) {
+                            builder: (BuildContext dialogContext) {
                               return Material(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text('Reason for report:'),
-                                    TextField(
-                                      onChanged: (newVal) { reason = newVal; },
-                                    ),
-                                    RaisedButton(
-                                      child: Text('Report'),
-                                      onPressed: () {
-                                        widget.submission.report(reason);
-                                        Navigator.pop(dialogContext);
-                                      },
-                                    )
-                                  ],
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Text('Reason for report:'),
+                                      TextField(
+                                        onChanged: (String newVal) { reason = newVal; },
+                                        maxLines: null,
+                                      ),
+                                      RaisedButton(
+                                        child: Text('Report post'),
+                                        onPressed: () async {
+                                          await widget.submission.report(reason);
+                                          Navigator.pop(dialogContext);
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             }
@@ -296,11 +305,27 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                       return [
                         PopupMenuItem(
                           value: postExtraActions.openProfile,
-                          child: Text('Open profile'),
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.person),
+                              ),
+                              Text('Open profile')
+                            ],
+                          ),
                         ),
                         PopupMenuItem(
                           value: postExtraActions.report,
-                          child: Text('Report'),
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.flag),
+                              ),
+                              Text('Report')
+                            ],
+                          ),
                         ),
                       ];
                     },

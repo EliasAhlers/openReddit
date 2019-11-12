@@ -59,7 +59,11 @@ class _PostScreenState extends State<PostScreen> {
                             submission: widget.submission,
                             preview: false,
                             onReply: (Comment replyComment) async {
-                              Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission); }));
+                              setState(() {
+                                this._comments.add(replyComment);
+                              });
+                              // Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return PostScreen(submission: widget.submission); }));
+                              // this._getComments();
                             },
                           ),
                           Divider(),

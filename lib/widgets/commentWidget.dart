@@ -5,9 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:openReddit/screens/profileScreen.dart';
+import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/widgets/ageWidget.dart';
 import 'package:openReddit/widgets/expandedSectionWidget.dart';
+
+enum commentExtraActions { openProfile, report }
 
 class CommentWidget extends StatefulWidget {
   final Comment comment;
@@ -240,6 +244,73 @@ class _CommentWidgetState extends State<CommentWidget>
                                     );
                                   }
                                 );
+                              },
+                            ),
+                            PopupMenuButton<commentExtraActions>(
+                              onSelected: (value) {
+                                switch (value) {
+                                  case commentExtraActions.openProfile:
+                                    Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(this.widget.comment.author)); }));
+                                    break;
+                                  case commentExtraActions.report:
+                                    String reason = '';
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext dialogContext) {
+                                        return Material(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text('Reason for report:'),
+                                                TextField(
+                                                  onChanged: (String newVal) { reason = newVal; },
+                                                  maxLines: null,
+                                                ),
+                                                RaisedButton(
+                                                  child: Text('Report post'),
+                                                  onPressed: () async {
+                                                    await widget.comment.report(reason);
+                                                    Navigator.pop(dialogContext);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    );
+                                    break;
+                                  default:
+                                }
+                              },
+                              itemBuilder: (BuildContext context) {
+                                return [
+                                  PopupMenuItem(
+                                    value: commentExtraActions.openProfile,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Icon(Icons.person),
+                                        ),
+                                        Text('Open profile')
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: commentExtraActions.report,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Icon(Icons.flag),
+                                        ),
+                                        Text('Report')
+                                      ],
+                                    ),
+                                  ),
+                                ];
                               },
                             ),
                           ],
