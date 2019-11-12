@@ -12,10 +12,11 @@ import 'package:openReddit/screens/subredditScreen.dart';
 import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/widgets/ageWidget.dart';
+import 'package:share/share.dart';
 
 import 'contentWidget.dart';
 
-enum postExtraActions { openProfile, report }
+enum postExtraActions { openProfile, shareTitleAndLink, shareLink, report }
 
 class PostWidget extends StatefulWidget {
   final Submission submission;
@@ -269,6 +270,12 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                         case postExtraActions.openProfile:
                           Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(widget.submission.author)); }));
                           break;
+                        case postExtraActions.shareLink:
+                          Share.share(this.widget.submission.url.toString());
+                          break;
+                        case postExtraActions.shareTitleAndLink:
+                          Share.share(this.widget.submission.title + "   " + this.widget.submission.url.toString());
+                          break;
                         case postExtraActions.report:
                           String reason = '';
                           showModalBottomSheet(
@@ -312,6 +319,30 @@ class _PostWidgetState extends State<PostWidget> with AutomaticKeepAliveClientMi
                                 child: Icon(Icons.person),
                               ),
                               Text('Open profile')
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: postExtraActions.shareLink,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.link),
+                              ),
+                              Text('Share link')
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: postExtraActions.shareTitleAndLink,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Icon(Icons.share),
+                              ),
+                              Text('Share title and link')
                             ],
                           ),
                         ),

@@ -10,8 +10,9 @@ import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/services/settingsService.dart';
 import 'package:openReddit/widgets/ageWidget.dart';
 import 'package:openReddit/widgets/expandedSectionWidget.dart';
+import 'package:share/share.dart';
 
-enum commentExtraActions { openProfile, report }
+enum commentExtraActions { openProfile, shareLink, report }
 
 class CommentWidget extends StatefulWidget {
   final Comment comment;
@@ -252,6 +253,9 @@ class _CommentWidgetState extends State<CommentWidget>
                                   case commentExtraActions.openProfile:
                                     Navigator.push(context, new MaterialPageRoute(builder: (BuildContext context) { return ProfileScreen(redditorRef: RedditService.reddit.redditor(this.widget.comment.author)); }));
                                     break;
+                                  case commentExtraActions.shareLink:
+                                    Share.share('https://reddit.com' + this.widget.comment.permalink);
+                                    break;
                                   case commentExtraActions.report:
                                     String reason = '';
                                     showModalBottomSheet(
@@ -295,6 +299,18 @@ class _CommentWidgetState extends State<CommentWidget>
                                           child: Icon(Icons.person),
                                         ),
                                         Text('Open profile')
+                                      ],
+                                    ),
+                                  ),
+                                  PopupMenuItem(
+                                    value: commentExtraActions.shareLink,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 8.0),
+                                          child: Icon(Icons.share),
+                                        ),
+                                        Text('Share link')
                                       ],
                                     ),
                                   ),
