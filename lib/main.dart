@@ -5,6 +5,7 @@ import 'package:openReddit/services/infoService.dart';
 import 'package:openReddit/services/settingsService.dart';
 
 main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SettingsService.init();
   InfoService.init();
   runApp(MyApp());

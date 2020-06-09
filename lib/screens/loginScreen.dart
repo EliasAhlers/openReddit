@@ -1,12 +1,12 @@
 import 'package:draw/draw.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:openReddit/screens/homeScreen.dart';
 import 'package:openReddit/screens/setupProcess/readySetupScreen.dart';
 import 'package:openReddit/screens/setupProcess/welcomeSetupScreen.dart';
 import 'package:openReddit/services/redditService.dart';
 import 'package:openReddit/services/settingsService.dart';
-import 'package:openReddit/tools/LoginAppBrowser.dart';
 import 'package:random_string/random_string.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -24,11 +24,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _codeReady = false;
   String _errorReason = '';
   String _state = randomAlphaNumeric(16);
-  LoginAppBrowser _loginAppBrowser;
+  InAppWebView _loginWebView;
 
   @override
   void initState() { 
-    this._loginAppBrowser = new LoginAppBrowser();
+    // this._loginAppBrowser = new LoginAppBrowser();
     super.initState();
     this.loginToReddit();
   }
@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Something went wrong while logging in! We asked our robot and it told us: "' + _errorReason + 
+                  'Something went wrong while logging in! :( We asked our robot and it told us: "' + _errorReason + 
                   '" Why don\'t you try again?',
                   style: TextStyle(
                     fontSize: 25,
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-        ) : Text('If you see this, the dev fucked up. Sorry :) The error is: ' + _errorReason),
+        ) : _loginWebView ?? Text('Loading...')
       ),
     );
   }
@@ -141,31 +141,25 @@ class _LoginScreenState extends State<LoginScreen> {
         );
 
         final String authUrl = RedditService.reddit.auth.url(['*'], this._state, compactLogin: true).toString();
-        this._loginAppBrowser.setCallbacks(
-          codeCallback: (String code) {
-            this.confirmRedditLogin(code);
-            _codeReady = true;
-          },
-          errorCallback: (String errorReason) {
-            setState(() {
-              this._error = true;
-              this._errorReason = errorReason;
-            });
-          },
-          exitCallback: () async {
-            await Future.delayed(Duration(milliseconds: 500));
-            if(!_codeReady && !_error)
-              Navigator.pushReplacement(context, new MaterialPageRoute(builder: (BuildContext context) { return LoginScreen(disableRedirect: true); }));
-          },
-          state: this._state
-        );
-        this._loginAppBrowser.open(
-          url: authUrl,
-          options: {
-            'transparentBackground': true,
-            'toolbarTop': false
-          }
-        );
+        setState(() {
+          this._loginWebView = new InAppWebView(
+            initialUrl: authUrl,
+            onLoadStart: (InAppWebViewController controller, String url) {
+              if(url.toString().contains('code=')) {
+                String code = url.toString().replaceAll('https://thatseliyt.de/?state=' + this._state + '&code=', '');
+                this.confirmRedditLogin(code);
+                _codeReady = true;
+              } else if(url.toString().contains('error')) {
+                String error = url.replaceAll('https://thatseliyt.de/?state=' + this._state + '&error=', '');
+                setState(() {
+                  this._error = true;
+                  this._errorReason = error;
+                });
+              }
+            },
+          );
+        });
+
 
       }
 
@@ -184,7 +178,6 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       await RedditService.reddit.auth.authorize(code);
     } catch (e) {
-      this._loginAppBrowser.close();
       setState(() {
         this._error = true;
         this._errorReason = e;

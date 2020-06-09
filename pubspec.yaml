@@ -31,22 +31,22 @@ dependencies:
     git:
       url: git://github.com/ThatsEli/DRAW.git
   vibration: 1.1.0
-  cached_network_image: ^1.1.1
-  flutter_inappbrowser: ^1.2.1
+  cached_network_image: ^2.2.0+1
   flutter_web_browser: ^0.11.0
   flutter_markdown: ^0.2.0
   sembast: ^2.0.1
   path_provider: ^1.2.0
   video_provider: ^1.2.3+1
   video_player: ^0.10.1+6
-  youtube_player_flutter: ^3.0.0+1
+  youtube_player_flutter: ^7.0.0+3
   chewie: ^0.9.7
   debug_mode: ^0.1.1
   dynamic_theme: ^1.0.1
   connectivity: ^0.4.3+7
   transparent_image: ^1.0.0
-  extended_image: ^0.6.1
+  extended_image: ^0.9.0
   share: ^0.6.3+1
+  flutter_inappwebview: ^3.3.0+3
 
 dev_dependencies:
   flutter_test:
