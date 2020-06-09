@@ -211,17 +211,20 @@ class _ContentWidgetState extends State<ContentWidget> with AutomaticKeepAliveCl
       SettingsService.getKey('content_youtube_load') == 'Always' ||
       (SettingsService.getKey('content_youtube_load') == 'WiFi' && InfoService.connectivity == ConnectivityResult.wifi)
     ) {
-    return this._loadYouTube ? YoutubePlayer(
-      context: context,
-      videoId: this._getYouTubeId(widget.submission.url.toString()),
-      flags: YoutubePlayerFlags(
-        autoPlay: SettingsService.getKey('content_youtube_autoplay'),
-      ),
-      key: Key(this._getYouTubeId(widget.submission.url.toString())),
-      onPlayerInitialized: (controller) {
-        _ytController = controller;
-      },
-    ) : Column(
+    return this._loadYouTube ? 
+    // YoutubePlayer(
+    //   context: context,
+    //   videoId: this._getYouTubeId(widget.submission.url.toString()),
+    //   flags: YoutubePlayerFlags(
+    //     autoPlay: SettingsService.getKey('content_youtube_autoplay'),
+    //   ),
+    //   key: Key(this._getYouTubeId(widget.submission.url.toString())),
+    //   onPlayerInitialized: (controller) {
+    //     _ytController = controller;
+    //   },
+    // )
+    Text('YT')
+     : Column(
       children: <Widget>[
         GestureDetector(
           child: Image.network(
