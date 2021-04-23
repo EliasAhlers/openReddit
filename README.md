@@ -1,13 +1,17 @@
 # openReddit
 
-A n open source Reddit app written in Flutter.
+An open source Reddit app written in Flutter.
+
+## Disclaimer
+This is one of my first Flutter apps so the code quality is not that good and there are
+many best practices that were ignored :( I started a rewrite here: https://github.com/ThatsEli/reddsource
 
 ## Why?
 
 There are many Reddit apps already out there. But none of these apps satisfied
-all of my needs or was open source so I could add them. Due to this I started 
+all of my needs or was open source so I could add feautures to them. Due to this I started 
 developing this app. It was originally just intended to help me learn Dart/Flutter. 
-But now I use it everyday and thougt, why not release it. So, here it is! 
+~~But now I use it everyday~~ and thougt, why not release it. So, here it is! 
 Please keep in mind, that I am relatively new to Flutter/Dart so there could
 be some beginner error. I am always open to tips and improovments!
 
